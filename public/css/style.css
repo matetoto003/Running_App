@@ -168,12 +168,6 @@ body.auth-page {
     position: relative;
 }
 
-.greeting {
-    margin-right: 15px;
-    color: #555;
-    font-size: 0.9em;
-    font-weight: 500;
-}
 
 .user-profile {
     position: relative;
@@ -199,10 +193,9 @@ body.auth-page {
     right: 0;
     top: 100%;
     background: white;
-    border-radius: 4px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    padding: 8px 0;
-    min-width: 150px;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    min-width: 240px;
     z-index: 1000;
 }
 
@@ -210,15 +203,70 @@ body.auth-page {
     display: block;
 }
 
-.profile-menu a {
+.profile-info {
+    padding: 16px;
+}
+
+.profile-header {
+    margin-bottom: 16px;
+}
+
+.profile-header .username {
+    font-size: 1.2em;
+    font-weight: 600;
+    color: #333;
+}
+
+.profile-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.profile-stat {
+    text-align: center;
+    padding: 8px;
+    background: #f8f9fa;
+    border-radius: 6px;
+}
+
+.profile-stat .stat-label {
     display: block;
-    padding: 8px 20px;
+    font-size: 0.8em;
+    color: #666;
+    margin-bottom: 4px;
+}
+
+.profile-stat .stat-value {
+    display: block;
+    font-size: 1.1em;
+    font-weight: 600;
+    color: #333;
+}
+
+.profile-menu-divider {
+    height: 1px;
+    background-color: #eee;
+    margin: 8px 0;
+}
+
+.profile-menu .menu-item {
+    display: block;
+    padding: 12px 16px;
     color: #333;
     text-decoration: none;
 }
 
-.profile-menu a:hover {
+.profile-menu .menu-item:hover {
     background-color: #f0f0f0;
+}
+
+.profile-menu .menu-item.logout {
+    color: #dc3545;
+}
+
+.profile-menu .menu-item.logout:hover {
+    background-color: #ffebee;
 }
 
 /* 3. OLDAL SPECIFIKUS TARTALOM */

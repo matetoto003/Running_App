@@ -184,14 +184,14 @@ app.get('/api/dashboard-stats', requireAuth, async (req, res) => {
         const statsQuery = `
             SELECT 
                 COUNT(*) as total_runs,
-                SUM(distance_km) as total_distance,
-                SUM(duration_min) as total_duration,
-                ROUND(AVG(distance_km), 2) as avg_distance,
-                ROUND(AVG(duration_min), 2) as avg_duration,
-                MAX(difficulty) as max_difficulty,
-                SUM(calories) as total_calories,
-                SUM(elevation_gained) as total_elevation,
-                ROUND(AVG(avg_heartRate), 0) as avg_heart_rate
+                COALESCE(SUM(distance_km), 0) as total_distance,
+                COALESCE(SUM(duration_min), 0) as total_duration,
+                COALESCE(ROUND(AVG(distance_km), 2), 0) as avg_distance,
+                COALESCE(ROUND(AVG(duration_min), 2), 0) as avg_duration,
+                COALESCE(MAX(difficulty), 0) as max_difficulty,
+                COALESCE(SUM(calories), 0) as total_calories,
+                COALESCE(SUM(elevation_gained), 0) as total_elevation,
+                COALESCE(ROUND(AVG(avg_heartRate), 0), 0) as avg_heart_rate
             FROM runs 
             WHERE user_id = $1 AND ${dateFilter}
         `;
@@ -257,6 +257,28 @@ app.get('/api/dashboard-stats', requireAuth, async (req, res) => {
 });
 
 // Utolsó futás lekérése
+// Profile statisztikák lekérése
+app.get('/api/profile-stats', requireAuth, async (req, res) => {
+    try {
+        console.log('Fetching stats for user:', req.session.userId); // Debug log
+
+        const result = await pool.query(
+            `SELECT 
+                COALESCE(COUNT(*), 0) as "totalRuns",
+                COALESCE(ROUND(SUM(distance_km)::numeric, 1), 0) as "totalDistance"
+             FROM runs 
+             WHERE user_id = $1`,
+            [req.session.userId]
+        );
+
+        console.log('Profile stats result:', result.rows[0]); // Debug log
+        res.json(result.rows[0]);
+    } catch (error) {
+        console.error('Error fetching profile stats:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
 app.get('/api/last-run', requireAuth, async (req, res) => {
     try {
         const result = await pool.query(

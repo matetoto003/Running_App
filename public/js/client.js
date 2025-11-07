@@ -1,14 +1,61 @@
 console.log('client.js betöltve.'); // Segítség a hibakereséshez
 
 // Profil menü kezelése
+async function fetchProfileStats() {
+    try {
+        console.log('Fetching profile stats...'); // Debug log
+        const response = await fetch('/api/profile-stats', {
+            credentials: 'include'
+        });
+        const data = await response.json();
+        console.log('Received profile stats:', data); // Debug log
+
+        if (response.ok) {
+            // Update total runs
+            const totalRuns = data.totalRuns;
+            console.log('Setting total runs to:', totalRuns); // Debug log
+            const totalRunsElements = document.querySelectorAll('#totalRuns');
+            totalRunsElements.forEach(element => {
+                element.textContent = totalRuns;
+                console.log('Updated totalRuns element:', element.id); // Debug log
+            });
+
+            // Update total distance
+            const totalDistance = data.totalDistance;
+            console.log('Setting total distance to:', totalDistance); // Debug log
+            const totalDistanceElements = document.querySelectorAll('#totalDistance');
+            totalDistanceElements.forEach(element => {
+                element.textContent = `${totalDistance} km`;
+                console.log('Updated totalDistance element:', element.id); // Debug log
+            });
+
+            // Update dashboard total distance if it exists
+            const dashboardTotalDistance = document.getElementById('dashboardTotalDistance');
+            if (dashboardTotalDistance) {
+                dashboardTotalDistance.textContent = `${totalDistance} km`;
+                console.log('Updated dashboard total distance'); // Debug log
+            }
+        }
+    } catch (error) {
+        console.error('Error fetching profile stats:', error);
+    }
+}
+
 function setupProfileMenu() {
     const profileButton = document.getElementById('profileButton');
     const profileMenu = document.getElementById('profileMenu');
     const logoutButton = document.getElementById('logoutButton');
     const usernameSpans = document.getElementsByClassName('username');
     
-    // Betöltéskor állítsuk be a felhasználónevet
+    // Betöltéskor állítsuk be a profile szöveget és a felhasználónevet a menüben
     const user = JSON.parse(localStorage.getItem('user'));
+    
+    // Set the button text to "Profile"
+    if (profileButton) {
+        profileButton.innerHTML = 'Profile ▼';
+    }
+    
+    // Set username in spans
     if (user && user.username) {
         Array.from(usernameSpans).forEach(span => {
             span.textContent = user.username;
@@ -16,11 +63,29 @@ function setupProfileMenu() {
     }
 
     if (profileButton && profileMenu) {
+        // Load stats immediately when page loads
+        fetchProfileStats();
+        
         // Profil menü megjelenítése/elrejtése
-        profileButton.addEventListener('click', (e) => {
+        profileButton.addEventListener('click', async (e) => {
             e.stopPropagation();
             profileMenu.classList.toggle('active');
+            
+            // Refresh stats when menu is opened
+            if (profileMenu.classList.contains('active')) {
+                await fetchProfileStats();
+            }
         });
+
+        // Settings gomb kezelése
+        const settingsButton = document.getElementById('settingsButton');
+        if (settingsButton) {
+            settingsButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                // TODO: Implement settings functionality
+                console.log('Settings clicked');
+            });
+        }
 
         // Kattintás kezelése a dokumentumon
         document.addEventListener('click', (e) => {

@@ -27,11 +27,27 @@
 
         <main class="content-area">
             <header class="topbar">
-                <span class="greeting">Hey <span class="username">Tamás</span>!</span>
                 <div class="user-profile">
-                    <button id="profileButton" class="profile-button">Profil ▼</button>
+                    <button id="profileButton" class="profile-button"><span class="username"></span> ▼</button>
                     <div id="profileMenu" class="profile-menu">
-                        <a href="#" id="logoutButton">Kijelentkezés</a>
+                        <div class="profile-info">
+                            <div class="profile-header">
+                                <span class="username"></span>
+                            </div>
+                            <div class="profile-details">
+                                <div class="profile-stat">
+                                    <span class="stat-label">Total Runs</span>
+                                    <span class="stat-value" id="totalRuns">0</span>
+                                </div>
+                                <div class="profile-stat">
+                                    <span class="stat-label">Total Distance</span>
+                                    <span class="stat-value" id="totalDistance">0 km</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="profile-menu-divider"></div>
+                        <a href="#" class="menu-item" id="settingsButton">Settings</a>
+                        <a href="#" class="menu-item logout" id="logoutButton">Kijelentkezés</a>
                     </div>
                 </div>
             </header>
@@ -78,14 +94,19 @@
                 <div class="dashboard-grid-bottom">
                     <div class="additional-stats-cards">
                         <div class="stat-card card">
+                            <p class="stat-label">Total Distance</p>
+                            <p class="stat-value" id="dashboardTotalDistance">0 km</p>
+                        </div>
+
+                        <div class="stat-card card">
                             <p class="stat-label">calories burnt</p>
-                            <p class="stat-value">10 251</p>
+                            <p class="stat-value" id="totalCalories">0</p>
                             <small>+8% to last month</small>
                         </div>
                         
                         <div class="stat-card card">
                             <p class="stat-label">Total hours spent</p>
-                            <p class="stat-value">6h</p>
+                            <p class="stat-value" id="totalHours">0h</p>
                             <small>2024/10/02</small>
                         </div>
                     </div>

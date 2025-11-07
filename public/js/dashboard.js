@@ -1,5 +1,5 @@
 // Dashboard kezelése
-let currentPeriod = 'month';
+let currentPeriod = 'year';
 let mainChart = null;
 
 // Címek az időszakokhoz
@@ -12,10 +12,12 @@ const periodTitles = {
 // Statisztikák lekérése és megjelenítése
 async function fetchAndDisplayStats(period) {
     try {
+        console.log('Fetching stats for period:', period); // Debug log
         const response = await fetch(`/api/dashboard-stats?period=${period}`, {
             credentials: 'include'
         });
         const data = await response.json();
+        console.log('Received dashboard stats:', data); // Debug log
 
         if (response.ok) {
             updateStatCards(data.stats);
@@ -32,27 +34,46 @@ async function fetchAndDisplayStats(period) {
 
 // Statisztika kártyák frissítése
 function updateStatCards(stats) {
+    console.log('Updating stats with:', stats); // Debug log
+
     // Elevation gained
     document.querySelector('.stat-card:nth-child(1) .stat-value').textContent = 
-        `${stats.total_elevation || 0}m`;
+        `${parseFloat(stats.total_elevation || 0)}m`;
 
     // Hardest run
     document.querySelector('.stat-card:nth-child(2) .stat-value').textContent = 
-        `${stats.max_difficulty || 0}/10`;
+        `${parseFloat(stats.max_difficulty || 0)}/10`;
 
     // Average heart rate
     document.querySelector('.stat-card:nth-child(3) .stat-value').textContent = 
-        `${stats.avg_heart_rate || 0} bpm`;
+        `${parseFloat(stats.avg_heart_rate || 0)} bpm`;
 
-    // Calories burnt
-    document.querySelector('.additional-stats-cards .stat-card:nth-child(1) .stat-value').textContent = 
-        stats.total_calories || '0';
+    // Update total distance with proper formatting
+    const totalDistance = parseFloat(stats.total_distance || 0);
+    const formattedDistance = totalDistance.toFixed(1);
+    document.getElementById('dashboardTotalDistance').textContent = `${formattedDistance} km`;
+
+    // Also update the profile stats to keep them in sync
+    const totalDistanceElements = document.querySelectorAll('#totalDistance');
+    totalDistanceElements.forEach(element => {
+        element.textContent = `${formattedDistance} km`;
+    });
+
+    // Total Calories with proper formatting
+    const totalCalories = parseInt(stats.total_calories || 0);
+    document.getElementById('totalCalories').textContent = totalCalories.toLocaleString();
 
     // Total hours
-    const hours = Math.floor((stats.total_duration || 0) / 60);
-    const minutes = Math.round((stats.total_duration || 0) % 60);
-    document.querySelector('.additional-stats-cards .stat-card:nth-child(2) .stat-value').textContent = 
-        `${hours}h ${minutes}m`;
+    const hours = Math.floor((parseFloat(stats.total_duration || 0)) / 60);
+    const minutes = Math.round((parseFloat(stats.total_duration || 0)) % 60);
+    document.getElementById('totalHours').textContent = `${hours}h ${minutes}m`;
+    
+    // Also update total runs to keep them in sync
+    const totalRuns = parseInt(stats.total_runs || 0);
+    const totalRunsElements = document.querySelectorAll('#totalRuns');
+    totalRunsElements.forEach(element => {
+        element.textContent = totalRuns.toString();
+    });
 }
 
 // Grafikonok frissítése
