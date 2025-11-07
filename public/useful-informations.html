@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Useful Informations - Running App</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="logo">Running app</div>
+            
+            <nav class="main-nav">
+                <h3 class="nav-title">Discover</h3>
+                <ul class="nav-list">
+                    <li><a href="index.html" class="nav-item">Home</a></li>
+                    <li><a href="dashboards.html" class="nav-item">Dashboards</a></li>
+                    <li><a href="add-new-run.html" class="nav-item">Add new run</a></li>
+                    <li><a href="training-plan.html" class="nav-item">Training plan</a></li>
+                    <li><a href="useful-informations.html" class="nav-item active">Useful informations</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="content-area">
+            <header class="topbar">
+                <span class="greeting">Hey <span class="username">Tamás</span>!</span>
+                <div class="user-profile">
+                    <button id="profileButton" class="profile-button">Profil ▼</button>
+                    <div id="profileMenu" class="profile-menu">
+                        <a href="#" id="logoutButton">Kijelentkezés</a>
+                    </div>
+                </div>
+            </header>
+            
+            <section class="page-content">
+                <h2>Useful informations</h2>
+
+                <div class="info-grid-top">
+                    
+                    <article class="info-card card">
+                        <h3>Tempo</h3>
+                        <p>Pace refers to the time it takes a runner to complete one kilometer or mile, typically expressed in minutes per kilometer (min/km). It is a commonly used metric to evaluate running performance and track improvement over time.</p>
+                    </article>
+        
+                    <article class="info-card card">
+                        <h3>Cadence</h3>
+                        <p>Cadence is the number of steps a runner takes per minute (spm). A higher cadence, usually around 170-180 spm, is associated with better running efficiency and reduced risk of injury.</p>
+                    </article>
+        
+                    <article class="info-card card">
+                        <h3>VO₂ max</h3>
+                        <p>VO₂ max is the maximum amount of oxygen the body can utilize during intense exercise, measured in milliliters per kilogram per minute (ml/kg/min). It is a key indicator of cardiovascular fitness and aerobic endurance.</p>
+                    </article>
+                    
+                </div>
+                
+                <div class="heart-rate-section card">
+                    <h3>Heart rate zones</h3>
+                    <p>Heart rate zones divide training intensity based on a percentage of maximum heart rate. These typically include:</p>
+                    
+                    <ul class="hr-zones-list">
+                        <li><strong>Zone 1</strong> (50-60%): Recovery</li>
+                        <li><strong>Zone 2</strong> (60-70%): Endurance</li>
+                        <li><strong>Zone 3</strong> (70-80%): Tempo</li>
+                        <li><strong>Zone 4</strong> (80-90%): Threshold</li>
+                        <li><strong>Zone 5</strong> (90-100%): Max effort</li>
+                    </ul>
+                    <p class="hr-summary">Training within the right zone helps improve performance and prevent overtraining.</p>
+                </div>
+            </section>
+        </main>
+    </div>
+    
+    <script src="js/client.js"></script>
+</body>
+</html>

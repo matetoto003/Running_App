@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - Running App</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="logo">Running app</div>
+            
+            <nav class="main-nav">
+                <h3 class="nav-title">Discover</h3>
+                <ul class="nav-list">
+                    <li><a href="index.html" class="nav-item active">Home</a></li>
+                    <li><a href="dashboards.html" class="nav-item">Dashboards</a></li>
+                    <li><a href="add-new-run.html" class="nav-item">Add new run</a></li>
+                    <li><a href="training-plan.html" class="nav-item">Training plan</a></li>
+                    <li><a href="useful-informations.html" class="nav-item">Useful informations</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="content-area">
+            <header class="topbar">
+                <span class="greeting">Hey <span class="username">Tamás</span>!</span>
+                <div class="user-profile">
+                    <button id="profileButton" class="profile-button">Profil ▼</button>
+                    <div id="profileMenu" class="profile-menu">
+                        <a href="#" id="logoutButton">Kijelentkezés</a>
+                    </div>
+                </div>
+            </header>
+            
+            <section class="page-content">
+                <h2>Welcome, <span class="username">Tamás</span>!</h2>
+                
+                <div class="card">
+                    <p>This is your home page. You are successfully logged in.</p>
+                    <p>Use the navigation on the left to add a new run, check your dashboards, or select a training plan.</p>
+                </div>
+                
+                <article class="card" style="margin-top: 20px;">
+                    <h3>Quick Overview</h3>
+                    <div id="lastRunInfo">
+                        <p>Loading your last run data...</p>
+                    </div>
+                    <a href="dashboards.html">Go to Dashboards</a>
+                </article>
+
+            </section>
+        </main>
+    </div>
+    
+    <script src="js/client.js"></script>
+</body>
+</html>

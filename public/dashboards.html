@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboards - Running App</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="logo">Running app</div>
+            
+            <nav class="main-nav">
+                <h3 class="nav-title">Discover</h3>
+                <ul class="nav-list">
+                    <li><a href="index.html" class="nav-item">Home</a></li>
+                    <li><a href="dashboards.html" class="nav-item active">Dashboards</a></li>
+                    <li><a href="add-new-run.html" class="nav-item">Add new run</a></li>
+                    <li><a href="training-plan.html" class="nav-item">Training plan</a></li>
+                    <li><a href="useful-informations.html" class="nav-item">Useful informations</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="content-area">
+            <header class="topbar">
+                <span class="greeting">Hey <span class="username">Tamás</span>!</span>
+                <div class="user-profile">
+                    <button id="profileButton" class="profile-button">Profil ▼</button>
+                    <div id="profileMenu" class="profile-menu">
+                        <a href="#" id="logoutButton">Kijelentkezés</a>
+                    </div>
+                </div>
+            </header>
+            
+            <section class="page-content">
+                <div class="dashboard-header">
+                    <h2>Dashboards</h2>
+                    <div class="period-selector">
+                        <button class="period-button" data-period="week">This Week</button>
+                        <button class="period-button active" data-period="month">This Month</button>
+                        <button class="period-button" data-period="year">This Year</button>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid-top">
+                    
+                    <div class="main-chart card">
+                        <h3>km in <span id="periodTitle">this month</span></h3>
+                        <div id="kmChart" class="chart-container">
+                            <canvas id="mainChart"></canvas>
+                        </div>
+                    </div>
+        
+                    <div class="stats-cards">
+                        <div class="stat-card card">
+                            <p class="stat-label">elevation gained</p>
+                            <p class="stat-value">1510 m</p>
+                            <small>+5% to last month</small>
+                        </div>
+                        
+                        <div class="stat-card card">
+                            <p class="stat-label">hardest run</p>
+                            <p class="stat-value">9/10</p>
+                            <small>2024/11/02</small>
+                        </div>
+                        
+                        <div class="stat-card card">
+                            <p class="stat-label">Avg cadence</p>
+                            <p class="stat-value">160 spm</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="dashboard-grid-bottom">
+                    <div class="additional-stats-cards">
+                        <div class="stat-card card">
+                            <p class="stat-label">calories burnt</p>
+                            <p class="stat-value">10 251</p>
+                            <small>+8% to last month</small>
+                        </div>
+                        
+                        <div class="stat-card card">
+                            <p class="stat-label">Total hours spent</p>
+                            <p class="stat-value">6h</p>
+                            <small>2024/10/02</small>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/client.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>
