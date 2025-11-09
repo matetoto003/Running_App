@@ -1,5 +1,5 @@
 // Dashboard kezelése
-let currentPeriod = 'year';
+let currentPeriod = 'month';
 let mainChart = null;
 
 // Címek az időszakokhoz
@@ -13,7 +13,24 @@ const periodTitles = {
 async function fetchAndDisplayStats(period) {
     try {
         console.log('Fetching stats for period:', period); // Debug log
-        const response = await fetch(`/api/dashboard-stats?period=${period}`, {
+        
+        // Időszak paraméterek beállítása
+        const now = new Date();
+        let startDate, endDate;
+        
+        if (period === 'week') {
+            startDate = new Date(now);
+            startDate.setDate(now.getDate() - 6);
+            endDate = now;
+        } else if (period === 'month') {
+            startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+            endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+        } else if (period === 'year') {
+            startDate = new Date(now.getFullYear(), 0, 1);
+            endDate = new Date(now.getFullYear(), 11, 31);
+        }
+
+        const response = await fetch(`/api/dashboard-stats?period=${period}&startDate=${startDate.toISOString()}&endDate=${endDate.toISOString()}`, {
             credentials: 'include'
         });
         const data = await response.json();
@@ -21,7 +38,7 @@ async function fetchAndDisplayStats(period) {
 
         if (response.ok) {
             updateStatCards(data.stats);
-            updateCharts(data.timeSeries, period);
+            updateCharts(data.timeSeries || [], period);
             // Cím frissítése
             document.getElementById('periodTitle').textContent = periodTitles[period];
         } else {
@@ -85,9 +102,49 @@ function updateCharts(timeSeriesData, period) {
         mainChart.destroy();
     }
 
-    // Adatok előkészítése
-    const labels = timeSeriesData.map(item => item.label);
-    const distances = timeSeriesData.map(item => parseFloat(item.distance) || 0);
+    // Adatok előkészítése az időszak alapján
+    let labels = [];
+    let dataMap = new Map();
+    
+    // Időszak alapján előállítjuk az összes lehetséges dátumot
+    const now = new Date();
+    if (period === 'week') {
+        // Az elmúlt 7 nap
+        for (let i = 6; i >= 0; i--) {
+            const date = new Date(now);
+            date.setDate(date.getDate() - i);
+            const label = date.toLocaleDateString('hu-HU', { month: 'short', day: 'numeric' });
+            labels.push(label);
+            dataMap.set(label, 0);
+        }
+    } else if (period === 'month') {
+        // A hónap összes napja
+        const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+        for (let i = 1; i <= lastDay; i++) {
+            const date = new Date(now.getFullYear(), now.getMonth(), i);
+            const label = date.toLocaleDateString('hu-HU', { month: 'short', day: 'numeric' });
+            labels.push(label);
+            dataMap.set(label, 0);
+        }
+    } else if (period === 'year') {
+        // Az év összes hónapja
+        for (let i = 0; i < 12; i++) {
+            const date = new Date(now.getFullYear(), i, 1);
+            const label = date.toLocaleDateString('hu-HU', { month: 'long' });
+            labels.push(label);
+            dataMap.set(label, 0);
+        }
+    }
+
+    // A kapott adatok beillesztése a megfelelő helyekre
+    timeSeriesData.forEach(item => {
+        if (dataMap.has(item.label)) {
+            dataMap.set(item.label, parseFloat(item.distance) || 0);
+        }
+    });
+
+    // Adatok kinyerése a Map-ből a labels sorrendjében
+    const distances = labels.map(label => dataMap.get(label));
 
     // Grafikon konfigurálása az időszaknak megfelelően
     const config = {
@@ -100,7 +157,8 @@ function updateCharts(timeSeriesData, period) {
                 backgroundColor: 'rgba(24, 144, 255, 0.6)',
                 borderColor: 'rgba(24, 144, 255, 1)',
                 borderWidth: 1,
-                borderRadius: 4
+                borderRadius: 4,
+                maxBarThickness: 40
             }]
         },
         options: {
@@ -111,6 +169,13 @@ function updateCharts(timeSeriesData, period) {
                     display: false
                 },
                 tooltip: {
+                    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                    titleColor: '#333',
+                    bodyColor: '#666',
+                    borderColor: 'rgba(24, 144, 255, 0.3)',
+                    borderWidth: 1,
+                    padding: 10,
+                    displayColors: false,
                     callbacks: {
                         label: (context) => `${context.parsed.y.toFixed(1)} km`
                     }
@@ -119,11 +184,41 @@ function updateCharts(timeSeriesData, period) {
             scales: {
                 y: {
                     beginAtZero: true,
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.05)'
+                    },
+                    ticks: {
+                        padding: 10,
+                        color: '#666',
+                        callback: function(value) {
+                            return value + ' km';
+                        }
+                    },
                     title: {
                         display: true,
-                        text: 'Distance (km)'
+                        text: 'Distance (km)',
+                        color: '#666',
+                        padding: {top: 10, bottom: 10}
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        padding: 5,
+                        color: '#666',
+                        maxRotation: period === 'month' ? 45 : 0,
+                        autoSkip: period === 'month' ? false : true,
+                        font: {
+                            size: period === 'month' ? 10 : 12
+                        }
                     }
                 }
+            },
+            animation: {
+                duration: 1000,
+                easing: 'easeInOutQuart'
             }
         }
     };

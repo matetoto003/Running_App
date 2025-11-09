@@ -388,11 +388,21 @@ button.submit-button:hover {
 }
 
 /* Chart Styles */
+.main-chart {
+    position: relative;
+    height: 400px;
+}
+
+.main-chart h3 {
+    margin-bottom: 15px;
+    font-size: 1.2em;
+    color: #666;
+}
+
 .chart-container {
     width: 100%;
-    height: 350px;
+    height: calc(100% - 40px);
     position: relative;
-    padding: 20px 0;
 }
 
 canvas {

@@ -166,18 +166,22 @@ app.get('/api/user', requireAuth, async (req, res) => {
 // Dashboard statisztikák lekérése
 app.get('/api/dashboard-stats', requireAuth, async (req, res) => {
     try {
-        const { period } = req.query; // week, month, vagy year
+        const { period, startDate, endDate } = req.query;
         let dateFilter;
         
-        switch(period) {
-            case 'week':
-                dateFilter = "created_at >= NOW() - INTERVAL '7 days'";
-                break;
-            case 'year':
-                dateFilter = "created_at >= NOW() - INTERVAL '1 year'";
-                break;
-            default: // month
-                dateFilter = "created_at >= NOW() - INTERVAL '30 days'";
+        if (startDate && endDate) {
+            dateFilter = "created_at BETWEEN $2 AND $3";
+        } else {
+            switch(period) {
+                case 'week':
+                    dateFilter = "created_at >= NOW() - INTERVAL '7 days'";
+                    break;
+                case 'year':
+                    dateFilter = "EXTRACT(YEAR FROM created_at) = EXTRACT(YEAR FROM CURRENT_DATE)";
+                    break;
+                default: // month
+                    dateFilter = "EXTRACT(YEAR FROM created_at) = EXTRACT(YEAR FROM CURRENT_DATE) AND EXTRACT(MONTH FROM created_at) = EXTRACT(MONTH FROM CURRENT_DATE)";
+            }
         }
 
         // Összesített statisztikák lekérése
@@ -201,42 +205,61 @@ app.get('/api/dashboard-stats', requireAuth, async (req, res) => {
         if (period === 'year') {
             timeSeriesQuery = `
                 SELECT 
-                    TO_CHAR(DATE_TRUNC('month', created_at), 'YYYY-MM') as date,
-                    TO_CHAR(DATE_TRUNC('month', created_at), 'Month') as label,
-                    SUM(distance_km) as distance,
-                    COUNT(*) as runs
-                FROM runs 
-                WHERE user_id = $1 AND ${dateFilter}
-                GROUP BY DATE_TRUNC('month', created_at)
-                ORDER BY date
+                    TO_CHAR(DATE_TRUNC('month', dt), 'Month') as label,
+                    COALESCE(SUM(r.distance_km), 0) as distance,
+                    COUNT(r.*) as runs
+                FROM (
+                    SELECT generate_series(
+                        date_trunc('year', CURRENT_DATE),
+                        date_trunc('year', CURRENT_DATE) + interval '11 months',
+                        interval '1 month'
+                    ) as dt
+                ) dates
+                LEFT JOIN runs r ON 
+                    DATE_TRUNC('month', r.created_at) = dates.dt AND
+                    r.user_id = $1
+                GROUP BY dt, label
+                ORDER BY dt
             `;
         } else if (period === 'week') {
             timeSeriesQuery = `
+                WITH days AS (
+                    SELECT generate_series(
+                        CURRENT_DATE - interval '6 days',
+                        CURRENT_DATE,
+                        interval '1 day'
+                    )::date as dt
+                )
                 SELECT 
-                    DATE(created_at) as date,
-                    TO_CHAR(created_at, 'Dy') as label,
-                    ROUND(SUM(distance_km)::numeric, 1) as distance,
-                    COUNT(*) as runs,
-                    ROUND(AVG(calories)::numeric, 0) as avg_calories,
-                    ROUND(AVG(avg_heartRate)::numeric, 0) as avg_heart_rate
-                FROM runs 
-                WHERE user_id = $1 AND ${dateFilter}
-                GROUP BY DATE(created_at)
-                ORDER BY date
+                    TO_CHAR(days.dt, 'Mon DD') as label,
+                    COALESCE(ROUND(SUM(r.distance_km)::numeric, 1), 0) as distance,
+                    COUNT(r.*) as runs
+                FROM days
+                LEFT JOIN runs r ON 
+                    DATE(r.created_at) = days.dt AND
+                    r.user_id = $1
+                GROUP BY days.dt, label
+                ORDER BY days.dt
             `;
         } else {
             timeSeriesQuery = `
+                WITH days AS (
+                    SELECT generate_series(
+                        date_trunc('month', CURRENT_DATE),
+                        (date_trunc('month', CURRENT_DATE) + interval '1 month' - interval '1 day')::date,
+                        interval '1 day'
+                    )::date as dt
+                )
                 SELECT 
-                    DATE(created_at) as date,
-                    TO_CHAR(created_at, 'DD') as label,
-                    ROUND(SUM(distance_km)::numeric, 1) as distance,
-                    COUNT(*) as runs,
-                    ROUND(AVG(calories)::numeric, 0) as avg_calories,
-                    ROUND(AVG(avg_heartRate)::numeric, 0) as avg_heart_rate
-                FROM runs 
-                WHERE user_id = $1 AND ${dateFilter}
-                GROUP BY DATE(created_at)
-                ORDER BY date
+                    TO_CHAR(days.dt, 'Mon DD') as label,
+                    COALESCE(ROUND(SUM(r.distance_km)::numeric, 1), 0) as distance,
+                    COUNT(r.*) as runs
+                FROM days
+                LEFT JOIN runs r ON 
+                    DATE(r.created_at) = days.dt AND
+                    r.user_id = $1
+                GROUP BY days.dt, label
+                ORDER BY days.dt
             `;
         }
 
