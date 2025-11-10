@@ -171,29 +171,54 @@ app.get('/api/dashboard-stats', requireAuth, async (req, res) => {
         
         switch(period) {
             case 'week':
-                dateFilter = "created_at >= NOW() - INTERVAL '7 days'";
+                // Get the start of the current week (Monday)
+                dateFilter = "created_at >= date_trunc('week', NOW()) AND created_at < date_trunc('week', NOW() + INTERVAL '1 week')";
+                break;
+            case 'month':
+                // Get the start of the current month
+                dateFilter = "created_at >= date_trunc('month', NOW()) AND created_at < date_trunc('month', NOW() + INTERVAL '1 month')";
                 break;
             case 'year':
-                dateFilter = "created_at >= NOW() - INTERVAL '1 year'";
+                // Get the start of the current year
+                dateFilter = "created_at >= date_trunc('year', NOW()) AND created_at < date_trunc('year', NOW() + INTERVAL '1 year')";
                 break;
-            default: // month
-                dateFilter = "created_at >= NOW() - INTERVAL '30 days'";
         }
+        console.log('Period:', period);
+        console.log('Date filter:', dateFilter);
 
         // Összesített statisztikák lekérése
         const statsQuery = `
+            WITH period_stats AS (
+                SELECT 
+                    COUNT(*) as total_runs,
+                    COALESCE(SUM(distance_km), 0) as total_distance,
+                    COALESCE(SUM(duration_min), 0) as total_duration,
+                    COALESCE(ROUND(AVG(distance_km), 2), 0) as avg_distance,
+                    COALESCE(ROUND(AVG(duration_min), 2), 0) as avg_duration,
+                    COALESCE(SUM(calories), 0) as total_calories,
+                    COALESCE(ROUND(SUM(elevation_gained)::numeric, 0), 0) as total_elevation,
+                    COALESCE(ROUND(AVG(avg_heartRate), 0), 0) as avg_heart_rate
+                FROM runs 
+                WHERE user_id = $1 AND ${dateFilter}
+            ),
+            hardest_run AS (
+                SELECT 
+                    COALESCE(difficulty, 0) as max_difficulty,
+                    CASE 
+                        WHEN difficulty IS NOT NULL THEN TO_CHAR(created_at, 'YYYY/MM/DD')
+                        ELSE NULL
+                    END as hardest_run_date
+                FROM runs
+                WHERE user_id = $1 AND ${dateFilter} AND difficulty IS NOT NULL
+                ORDER BY difficulty DESC, created_at DESC
+                LIMIT 1
+            )
             SELECT 
-                COUNT(*) as total_runs,
-                COALESCE(SUM(distance_km), 0) as total_distance,
-                COALESCE(SUM(duration_min), 0) as total_duration,
-                COALESCE(ROUND(AVG(distance_km), 2), 0) as avg_distance,
-                COALESCE(ROUND(AVG(duration_min), 2), 0) as avg_duration,
-                COALESCE(MAX(difficulty), 0) as max_difficulty,
-                COALESCE(SUM(calories), 0) as total_calories,
-                COALESCE(SUM(elevation_gained), 0) as total_elevation,
-                COALESCE(ROUND(AVG(avg_heartRate), 0), 0) as avg_heart_rate
-            FROM runs 
-            WHERE user_id = $1 AND ${dateFilter}
+                p.*,
+                h.max_difficulty,
+                h.hardest_run_date
+            FROM period_stats p
+            CROSS JOIN hardest_run h
         `;
 
         // Időszak specifikus lekérdezés a grafikonhoz
@@ -212,38 +237,61 @@ app.get('/api/dashboard-stats', requireAuth, async (req, res) => {
             `;
         } else if (period === 'week') {
             timeSeriesQuery = `
+                WITH week_dates AS (
+                    SELECT generate_series(
+                        date_trunc('week', NOW()),
+                        date_trunc('week', NOW()) + INTERVAL '6 days',
+                        INTERVAL '1 day'
+                    ) AS date
+                )
                 SELECT 
-                    DATE(created_at) as date,
-                    TO_CHAR(created_at, 'Dy') as label,
-                    ROUND(SUM(distance_km)::numeric, 1) as distance,
-                    COUNT(*) as runs,
-                    ROUND(AVG(calories)::numeric, 0) as avg_calories,
-                    ROUND(AVG(avg_heartRate)::numeric, 0) as avg_heart_rate
-                FROM runs 
-                WHERE user_id = $1 AND ${dateFilter}
-                GROUP BY DATE(created_at)
-                ORDER BY date
+                    wd.date::date as date,
+                    TO_CHAR(wd.date, 'Day') as label,
+                    COALESCE(ROUND(SUM(r.distance_km)::numeric, 1), 0) as distance,
+                    COUNT(r.*) as runs,
+                    ROUND(AVG(r.calories)::numeric, 0) as avg_calories,
+                    ROUND(AVG(r.avg_heartRate)::numeric, 0) as avg_heart_rate
+                FROM week_dates wd
+                LEFT JOIN runs r ON DATE(r.created_at) = wd.date::date AND r.user_id = $1
+                GROUP BY wd.date
+                ORDER BY wd.date
             `;
         } else {
             timeSeriesQuery = `
+                WITH month_dates AS (
+                    SELECT generate_series(
+                        date_trunc('month', NOW()),
+                        date_trunc('month', NOW() + INTERVAL '1 month') - INTERVAL '1 day',
+                        INTERVAL '1 day'
+                    ) AS date
+                )
                 SELECT 
-                    DATE(created_at) as date,
-                    TO_CHAR(created_at, 'DD') as label,
-                    ROUND(SUM(distance_km)::numeric, 1) as distance,
-                    COUNT(*) as runs,
-                    ROUND(AVG(calories)::numeric, 0) as avg_calories,
-                    ROUND(AVG(avg_heartRate)::numeric, 0) as avg_heart_rate
-                FROM runs 
-                WHERE user_id = $1 AND ${dateFilter}
-                GROUP BY DATE(created_at)
-                ORDER BY date
+                    md.date::date as date,
+                    TO_CHAR(md.date, 'DD') as label,
+                    COALESCE(ROUND(SUM(r.distance_km)::numeric, 1), 0) as distance,
+                    COUNT(r.*) as runs,
+                    ROUND(AVG(r.calories)::numeric, 0) as avg_calories,
+                    ROUND(AVG(r.avg_heartRate)::numeric, 0) as avg_heart_rate
+                FROM month_dates md
+                LEFT JOIN runs r ON DATE(r.created_at) = md.date::date AND r.user_id = $1
+                GROUP BY md.date
+                ORDER BY md.date
             `;
         }
 
         const [stats, timeSeries] = await Promise.all([
             pool.query(statsQuery, [req.session.userId]),
             pool.query(timeSeriesQuery, [req.session.userId])
-        ]);
+            ]);
+
+            // Send both the stats and timeSeries data in the response
+            res.json({
+                stats: stats.rows[0],
+                timeSeries: timeSeries.rows
+            });
+
+        console.log('Period:', period);
+        console.log('Stats for period:', stats.rows[0]);
 
         res.json({
             stats: stats.rows[0],
