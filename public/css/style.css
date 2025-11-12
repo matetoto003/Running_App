@@ -468,6 +468,36 @@ canvas {
     margin-bottom: 20px;
 }
 
+.progress-container {
+    margin: 15px 0;
+    padding: 10px;
+    background-color: #f5f5f5;
+    border-radius: 6px;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background-color: #e0e0e0;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 5px;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #1890ff, #40a9ff);
+    transition: width 0.3s ease;
+    border-radius: 4px;
+}
+
+.progress-text {
+    font-size: 0.8em;
+    color: #666;
+    margin: 5px 0 0 0;
+    font-weight: 600;
+}
+
 .btn-start {
     display: inline-block;
     padding: 10px 20px;
@@ -546,4 +576,133 @@ button:disabled {
     opacity: 0.7;
     cursor: not-allowed;
     background-color: #ccc;
+}
+
+/* === MODAL ABLAK STÍLUSA === */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+    animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 5% auto;
+    padding: 30px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 600px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    animation: slideIn 0.3s ease-in;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+}
+
+#modalTitle {
+    margin-top: 0;
+    color: #333;
+    border-bottom: 2px solid #1890ff;
+    padding-bottom: 15px;
+}
+
+.training-list {
+    margin-top: 20px;
+}
+
+.week-group {
+    margin-bottom: 25px;
+}
+
+.week-title {
+    font-size: 1.3em;
+    color: #1890ff;
+    margin: 20px 0 15px 0;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #1890ff;
+    font-weight: 600;
+}
+
+.week-group:first-child .week-title {
+    margin-top: 0;
+}
+
+.sessions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.training-session {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    margin-bottom: 0;
+    background-color: #f9f9f9;
+    border-radius: 6px;
+    border-left: 4px solid #1890ff;
+    transition: all 0.3s ease;
+}
+
+.training-session:hover {
+    background-color: #f0f5ff;
+    box-shadow: 0 2px 8px rgba(24, 144, 255, 0.1);
+}
+
+.session-checkbox {
+    width: 20px;
+    height: 20px;
+    margin-right: 15px;
+    cursor: pointer;
+    accent-color: #1890ff;
+}
+
+.session-label {
+    flex: 1;
+    cursor: pointer;
+    user-select: none;
+    color: #333;
+}
+
+.training-session input[type="checkbox"]:checked + .session-label {
+    color: #888;
+    text-decoration: line-through;
 }

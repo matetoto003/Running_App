@@ -188,37 +188,24 @@ app.get('/api/dashboard-stats', requireAuth, async (req, res) => {
 
         // Összesített statisztikák lekérése
         const statsQuery = `
-            WITH period_stats AS (
-                SELECT 
-                    COUNT(*) as total_runs,
-                    COALESCE(SUM(distance_km), 0) as total_distance,
-                    COALESCE(SUM(duration_min), 0) as total_duration,
-                    COALESCE(ROUND(AVG(distance_km), 2), 0) as avg_distance,
-                    COALESCE(ROUND(AVG(duration_min), 2), 0) as avg_duration,
-                    COALESCE(SUM(calories), 0) as total_calories,
-                    COALESCE(ROUND(SUM(elevation_gained)::numeric, 0), 0) as total_elevation,
-                    COALESCE(ROUND(AVG(avg_heartRate), 0), 0) as avg_heart_rate
-                FROM runs 
-                WHERE user_id = $1 AND ${dateFilter}
-            ),
-            hardest_run AS (
-                SELECT 
-                    COALESCE(difficulty, 0) as max_difficulty,
-                    CASE 
-                        WHEN difficulty IS NOT NULL THEN TO_CHAR(created_at, 'YYYY/MM/DD')
-                        ELSE NULL
-                    END as hardest_run_date
-                FROM runs
-                WHERE user_id = $1 AND ${dateFilter} AND difficulty IS NOT NULL
-                ORDER BY difficulty DESC, created_at DESC
-                LIMIT 1
-            )
             SELECT 
-                p.*,
-                h.max_difficulty,
-                h.hardest_run_date
-            FROM period_stats p
-            CROSS JOIN hardest_run h
+                COUNT(*) as total_runs,
+                COALESCE(SUM(distance_km), 0) as total_distance,
+                COALESCE(SUM(duration_min), 0) as total_duration,
+                COALESCE(ROUND(AVG(distance_km), 2), 0) as avg_distance,
+                COALESCE(ROUND(AVG(duration_min), 2), 0) as avg_duration,
+                COALESCE(SUM(calories), 0) as total_calories,
+                COALESCE(ROUND(SUM(elevation_gained)::numeric, 0), 0) as total_elevation,
+                COALESCE(ROUND(AVG(avg_heartRate), 0), 0) as avg_heart_rate,
+                COALESCE((
+                    SELECT difficulty 
+                    FROM runs
+                    WHERE user_id = $1 AND ${dateFilter}
+                    ORDER BY difficulty DESC, created_at DESC
+                    LIMIT 1
+                ), 0) as max_difficulty
+            FROM runs 
+            WHERE user_id = $1 AND ${dateFilter}
         `;
 
         // Időszak specifikus lekérdezés a grafikonhoz
@@ -226,7 +213,8 @@ app.get('/api/dashboard-stats', requireAuth, async (req, res) => {
         if (period === 'year') {
             timeSeriesQuery = `
                 SELECT 
-                    TO_CHAR(DATE_TRUNC('month', dt), 'Month') as label,
+                    dt::date as date,
+                    TO_CHAR(dt, 'Month') as label,
                     COALESCE(SUM(r.distance_km), 0) as distance,
                     COUNT(r.*) as runs
                 FROM (
@@ -289,17 +277,12 @@ app.get('/api/dashboard-stats', requireAuth, async (req, res) => {
         const [stats, timeSeries] = await Promise.all([
             pool.query(statsQuery, [req.session.userId]),
             pool.query(timeSeriesQuery, [req.session.userId])
-            ]);
-
-            // Send both the stats and timeSeries data in the response
-            res.json({
-                stats: stats.rows[0],
-                timeSeries: timeSeries.rows
-            });
+        ]);
 
         console.log('Period:', period);
         console.log('Stats for period:', stats.rows[0]);
 
+        // Send both the stats and timeSeries data in the response
         res.json({
             stats: stats.rows[0],
             timeSeries: timeSeries.rows

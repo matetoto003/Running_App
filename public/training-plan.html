@@ -56,47 +56,350 @@
 
                 <div class="training-plan-grid">
             
-                    <article class="plan-card card">
+                    <article class="plan-card card" data-plan="5k">
                         <h3>5k training plan</h3>
                         <p class="plan-duration">5 weeks</p>
+                        <div class="progress-container" style="display: none;">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 0%"></div>
+                            </div>
+                            <p class="progress-text">0%</p>
+                        </div>
                         <a href="#" class="btn-start">Start it</a>
                     </article>
         
-                    <article class="plan-card card">
+                    <article class="plan-card card" data-plan="10k">
                         <h3>10k training plan</h3>
                         <p class="plan-duration">10 weeks</p>
+                        <div class="progress-container" style="display: none;">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 0%"></div>
+                            </div>
+                            <p class="progress-text">0%</p>
+                        </div>
                         <a href="#" class="btn-start">Start it</a>
                     </article>
         
-                    <article class="plan-card card">
+                    <article class="plan-card card" data-plan="half-marathon">
                         <h3>Half-marathon training plan</h3>
                         <p class="plan-duration">16 weeks</p>
+                        <div class="progress-container" style="display: none;">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 0%"></div>
+                            </div>
+                            <p class="progress-text">0%</p>
+                        </div>
                         <a href="#" class="btn-start">Start it</a>
                     </article>
         
-                    <article class="plan-card card">
+                    <article class="plan-card card" data-plan="marathon">
                         <h3>Marathon training plan</h3>
                         <p class="plan-duration">20 weeks</p>
+                        <div class="progress-container" style="display: none;">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 0%"></div>
+                            </div>
+                            <p class="progress-text">0%</p>
+                        </div>
                         <a href="#" class="btn-start">Start it</a>
                     </article>
         
-                    <article class="plan-card card">
+                    <article class="plan-card card" data-plan="get-better">
                         <h3>Just get better training plan</h3>
                         <p class="plan-duration">10 weeks</p>
+                        <div class="progress-container" style="display: none;">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 0%"></div>
+                            </div>
+                            <p class="progress-text">0%</p>
+                        </div>
                         <a href="#" class="btn-start">Start it</a>
                     </article>
         
-                    <article class="plan-card card">
+                    <article class="plan-card card" data-plan="hybrid">
                         <h3>Hybrid athlete training plan</h3>
                         <p class="plan-duration">10 weeks</p>
+                        <div class="progress-container" style="display: none;">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 0%"></div>
+                            </div>
+                            <p class="progress-text">0%</p>
+                        </div>
                         <a href="#" class="btn-start">Start it</a>
                     </article>
                     
                 </div>
             </section>
+
+            <!-- Training Modal -->
+            <div id="trainingModal" class="modal">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <h2 id="modalTitle">Training Sessions</h2>
+                    <div id="trainingList" class="training-list">
+                        <!-- Sessions will be populated here -->
+                    </div>
+                </div>
+            </div>
         </main>
     </div>
     
     <script src="js/client.js"></script>
-</body>
-</html>
+    <script>
+        // Edzéstervek adatai
+        const trainingPlans = {
+            '5k': [
+                { week: 1, description: 'Easy run - 3km', distance: 3 },
+                { week: 1, description: 'Tempo run - 4km', distance: 4 },
+                { week: 2, description: 'Long run - 5km', distance: 5 },
+                { week: 2, description: 'Interval training - 3km', distance: 3 },
+                { week: 3, description: 'Recovery run - 2km', distance: 2 },
+                { week: 3, description: 'Speed work - 4km', distance: 4 },
+                { week: 4, description: 'Easy run - 3km', distance: 3 },
+                { week: 4, description: 'Long run - 6km', distance: 6 },
+                { week: 5, description: 'Final speed session - 5km', distance: 5 }
+            ],
+            '10k': [
+                { week: 1, description: 'Base building run - 5km', distance: 5 },
+                { week: 1, description: 'Tempo run - 5km', distance: 5 },
+                { week: 2, description: 'Long run - 7km', distance: 7 },
+                { week: 2, description: 'Interval work - 5km', distance: 5 },
+                { week: 3, description: 'Easy run - 4km', distance: 4 },
+                { week: 3, description: 'Fartlek training - 6km', distance: 6 },
+                { week: 4, description: 'Long run - 8km', distance: 8 },
+                { week: 4, description: 'Speed session - 5km', distance: 5 },
+                { week: 5, description: 'Recovery run - 3km', distance: 3 },
+                { week: 5, description: 'Tempo run - 6km', distance: 6 }
+            ],
+            'half-marathon': [
+                { week: 1, description: 'Base run - 6km', distance: 6 },
+                { week: 1, description: 'Tempo - 6km', distance: 6 },
+                { week: 2, description: 'Long run - 9km', distance: 9 },
+                { week: 2, description: 'Speed work - 6km', distance: 6 },
+                { week: 3, description: 'Easy - 5km', distance: 5 },
+                { week: 3, description: 'Interval training - 7km', distance: 7 },
+                { week: 4, description: 'Long run - 10km', distance: 10 },
+                { week: 4, description: 'Tempo - 7km', distance: 7 }
+            ],
+            'marathon': [
+                { week: 1, description: 'Easy run - 8km', distance: 8 },
+                { week: 1, description: 'Tempo - 7km', distance: 7 },
+                { week: 2, description: 'Long run - 12km', distance: 12 },
+                { week: 2, description: 'Speed work - 7km', distance: 7 },
+                { week: 3, description: 'Recovery - 6km', distance: 6 },
+                { week: 3, description: 'Interval training - 8km', distance: 8 },
+                { week: 4, description: 'Long run - 15km', distance: 15 },
+                { week: 4, description: 'Tempo - 8km', distance: 8 }
+            ],
+            'get-better': [
+                { week: 1, description: 'Easy run - 4km', distance: 4 },
+                { week: 1, description: 'Speed session - 5km', distance: 5 },
+                { week: 2, description: 'Long run - 6km', distance: 6 },
+                { week: 2, description: 'Tempo - 5km', distance: 5 },
+                { week: 3, description: 'Recovery run - 3km', distance: 3 },
+                { week: 3, description: 'Interval training - 5km', distance: 5 },
+                { week: 4, description: 'Easy run - 4km', distance: 4 },
+                { week: 4, description: 'Long run - 7km', distance: 7 }
+            ],
+            'hybrid': [
+                { week: 1, description: 'Running base - 5km', distance: 5 },
+                { week: 1, description: 'Cross-training - Cycling', distance: 0 },
+                { week: 2, description: 'Strength session - 6km', distance: 6 },
+                { week: 2, description: 'Swimming workout', distance: 0 },
+                { week: 3, description: 'Easy run - 4km', distance: 4 },
+                { week: 3, description: 'Tempo with strength - 5km', distance: 5 },
+                { week: 4, description: 'Long run - 8km', distance: 8 },
+                { week: 4, description: 'Cross-training - Cycling', distance: 0 }
+            ]
+        };
+
+        // Progress tracker tárolása
+        const progressTracker = {};
+
+        // LocalStorage-ból betölti az edzések állapotát
+        function loadProgressData() {
+            const saved = localStorage.getItem('trainingProgress');
+            if (saved) {
+                return JSON.parse(saved);
+            }
+            return {};
+        }
+
+        // LocalStorage-ba menti az edzések állapotát
+        function saveProgressData(data) {
+            localStorage.setItem('trainingProgress', JSON.stringify(data));
+        }
+
+        // Inicializálja a progress trackert
+        const savedProgress = loadProgressData();
+
+        // Modal kezelés
+        const modal = document.getElementById('trainingModal');
+        const closeBtn = document.querySelector('.close');
+        const startButtons = document.querySelectorAll('.btn-start');
+        let currentPlanId = null;
+
+        startButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                const planCard = button.closest('.plan-card');
+                const planId = planCard.dataset.plan;
+                const planTitle = planCard.querySelector('h3').textContent;
+                
+                currentPlanId = planId;
+                
+                // Progress container megjelenítése
+                const progressContainer = planCard.querySelector('.progress-container');
+                progressContainer.style.display = 'block';
+                
+                // Button szövegének módosítása
+                button.textContent = 'Continue';
+                
+                openTrainingModal(planId, planTitle);
+            });
+        });
+
+        closeBtn.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+
+        window.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+
+        // Oldal betöltésekor inicializálja a progress barokat
+        document.addEventListener('DOMContentLoaded', () => {
+            Object.keys(trainingPlans).forEach(planId => {
+                const planCard = document.querySelector(`[data-plan="${planId}"]`);
+                if (planCard) {
+                    // Ellenőrzi, hogy van-e bármilyen mentett edzés ehhez a tervhez
+                    let hasProgress = false;
+                    Object.keys(savedProgress).forEach(key => {
+                        if (key.startsWith(planId + '-')) {
+                            hasProgress = true;
+                            const progressContainer = planCard.querySelector('.progress-container');
+                            progressContainer.style.display = 'block';
+                            const button = planCard.querySelector('.btn-start');
+                            button.textContent = 'Continue';
+                        }
+                    });
+                    
+                    if (hasProgress) {
+                        updateProgress(planId);
+                    }
+                }
+            });
+        });
+
+        function updateProgress(planId) {
+            const sessions = trainingPlans[planId] || [];
+            const totalCount = sessions.length;
+            let checkedCount = 0;
+
+            sessions.forEach((session, index) => {
+                sessions.forEach((s, idx) => {
+                    if (s.week === session.week && idx <= index) {
+                        const checkboxId = `${planId}-session-${session.week}-${sessions.filter(s => s.week === session.week).indexOf(s)}`;
+                        if (savedProgress[checkboxId]) {
+                            checkedCount++;
+                        }
+                    }
+                });
+            });
+
+            // Egyszerűbb számolás
+            checkedCount = 0;
+            Object.keys(savedProgress).forEach(key => {
+                if (key.startsWith(planId + '-')) {
+                    checkedCount++;
+                }
+            });
+
+            const percentage = Math.round((checkedCount / totalCount) * 100);
+
+            // Progress bar frissítése a kártyán
+            const planCard = document.querySelector(`[data-plan="${planId}"]`);
+            if (planCard) {
+                const progressFill = planCard.querySelector('.progress-fill');
+                const progressText = planCard.querySelector('.progress-text');
+                progressFill.style.width = percentage + '%';
+                progressText.textContent = percentage + '%';
+            }
+        }
+
+        function openTrainingModal(planId, planTitle) {
+            document.getElementById('modalTitle').textContent = planTitle;
+            const trainingList = document.getElementById('trainingList');
+            trainingList.innerHTML = '';
+
+            const sessions = trainingPlans[planId] || [];
+            
+            // Csoportosítás heti szerint
+            const weekSessions = {};
+            sessions.forEach(session => {
+                if (!weekSessions[session.week]) {
+                    weekSessions[session.week] = [];
+                }
+                weekSessions[session.week].push(session);
+            });
+
+            // Hetek megjelenítése
+            Object.keys(weekSessions).sort((a, b) => a - b).forEach(week => {
+                const weekDiv = document.createElement('div');
+                weekDiv.className = 'week-group';
+                
+                const weekTitle = document.createElement('h3');
+                weekTitle.className = 'week-title';
+                weekTitle.textContent = `Week ${week}`;
+                weekDiv.appendChild(weekTitle);
+
+                const sessionsList = document.createElement('div');
+                sessionsList.className = 'sessions-list';
+
+                weekSessions[week].forEach((session, index) => {
+                    const sessionDiv = document.createElement('div');
+                    sessionDiv.className = 'training-session';
+                    
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.id = `session-${week}-${index}`;
+                    checkbox.className = 'session-checkbox';
+                    
+                    // Betöltés a mentett állapotból
+                    const checkboxId = `${planId}-session-${week}-${index}`;
+                    if (savedProgress[checkboxId]) {
+                        checkbox.checked = true;
+                    }
+                    
+                    // Checkboxra kattintáskor frissítse a progress és mentse
+                    checkbox.addEventListener('change', () => {
+                        if (checkbox.checked) {
+                            savedProgress[checkboxId] = true;
+                        } else {
+                            delete savedProgress[checkboxId];
+                        }
+                        saveProgressData(savedProgress);
+                        updateProgress(planId);
+                    });
+                    
+                    const label = document.createElement('label');
+                    label.htmlFor = `session-${week}-${index}`;
+                    label.className = 'session-label';
+                    label.innerHTML = `${session.description}`;
+                    
+                    sessionDiv.appendChild(checkbox);
+                    sessionDiv.appendChild(label);
+                    sessionsList.appendChild(sessionDiv);
+                });
+
+                weekDiv.appendChild(sessionsList);
+                trainingList.appendChild(weekDiv);
+            });
+
+            // Frissítse a progress bar-t megnyitáskor
+            updateProgress(planId);
+            modal.style.display = 'block';
+        }
+    </script>
