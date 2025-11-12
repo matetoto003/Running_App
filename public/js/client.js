@@ -10,6 +10,12 @@ async function fetchProfileStats() {
         const data = await response.json();
         console.log('Received profile stats:', data); // Debug log
 
+        if (response.status === 401) {
+            // Redirect to login page if not authenticated
+            window.location.href = '/login.html';
+            return;
+        }
+
         if (response.ok) {
             // Update total runs
             const totalRuns = data.totalRuns;
