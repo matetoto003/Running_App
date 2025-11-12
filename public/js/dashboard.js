@@ -119,6 +119,27 @@ function updateStatCards(stats) {
     const minutes = Math.round((parseFloat(stats.total_duration || 0)) % 60);
     document.getElementById('totalHours').textContent = `${hours}h ${minutes}m`;
     
+    // Average heart rate
+    const avgHeartRate = parseInt(stats.avg_heart_rate || 0);
+    const avgHeartRateEl = document.getElementById('avgHeartRate');
+    if (avgHeartRateEl) {
+        avgHeartRateEl.textContent = avgHeartRate > 0 ? `${avgHeartRate} bpm` : '0 bpm';
+    }
+    
+    // Average tempo (pace) - convert from minutes to min:sec format
+    const avgPaceMinutes = parseFloat(stats.avg_pace || 0);
+    const avgTempoEl = document.getElementById('avgTempo');
+    if (avgTempoEl) {
+        if (avgPaceMinutes > 0) {
+            const minutes = Math.floor(avgPaceMinutes);
+            const seconds = Math.round((avgPaceMinutes - minutes) * 60);
+            const formattedTempo = `${minutes}:${seconds.toString().padStart(2, '0')} min/km`;
+            avgTempoEl.textContent = formattedTempo;
+        } else {
+            avgTempoEl.textContent = '0:00 min/km';
+        }
+    }
+    
     // Also update total runs to keep them in sync (profile/header)
     const totalRunsProfileValue = parseInt(stats.total_runs || 0);
     const totalRunsElements = document.querySelectorAll('#totalRuns');

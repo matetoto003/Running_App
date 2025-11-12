@@ -95,18 +95,30 @@
                         </div>
                         
                         <div class="stat-card card">
-                            <p class="stat-label">Total runs</p>
-                            <p class="stat-value">0</p>
+                            <div class="stat-card-header">
+                                <p class="stat-label">avg heart rate</p>
+                                <a href="useful-informations.html#heart-rate-section" class="help-icon" title="Learn more about heart rate zones">?</a>
+                            </div>
+                            <p class="stat-value" id="avgHeartRate">0 bpm</p>
                             <small></small>
                         </div>
-                    </div>
-                </div>
-                
-                <div class="dashboard-grid-bottom">
-                    <div class="additional-stats-cards">
+                        
                         <div class="stat-card card">
-                            <p class="stat-label">Total Distance</p>
+                            <div class="stat-card-header">
+                                <p class="stat-label">avg tempo</p>
+                                <a href="useful-informations.html#tempo-section" class="help-icon" title="Learn more about tempo">?</a>
+                            </div>
+                            <p class="stat-value" id="avgTempo">0:00 min/km</p>
+                            <small></small>
+                        </div>
+
+                        <div class="stat-card card">
+                            <div class="stat-card-header">
+                                <p class="stat-label">Distance</p>
+                                <a href="useful-informations.html#distance-section" class="help-icon" title="Learn more about distance & volume">?</a>
+                            </div>
                             <p class="stat-value" id="dashboardTotalDistance">0 km</p>
+                            <small></small>
                         </div>
 
                         <div class="stat-card card">
@@ -114,7 +126,7 @@
                             <p class="stat-value" id="totalCalories">0</p>
                             <small>+8% to last month</small>
                         </div>
-                        
+
                         <div class="stat-card card">
                             <p class="stat-label">Total hours spent</p>
                             <p class="stat-value" id="totalHours">0h</p>

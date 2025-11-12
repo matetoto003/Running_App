@@ -203,7 +203,12 @@ app.get('/api/dashboard-stats', requireAuth, async (req, res) => {
                     WHERE user_id = $1 AND ${dateFilter}
                     ORDER BY difficulty DESC, created_at DESC
                     LIMIT 1
-                ), 0) as max_difficulty
+                ), 0) as max_difficulty,
+                CASE 
+                    WHEN COALESCE(SUM(distance_km), 0) > 0 
+                    THEN COALESCE(ROUND(SUM(duration_min) / SUM(distance_km), 2), 0)
+                    ELSE 0
+                END as avg_pace
             FROM runs 
             WHERE user_id = $1 AND ${dateFilter}
         `;
