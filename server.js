@@ -364,6 +364,28 @@ app.get('/api/last-run', requireAuth, async (req, res) => {
     }
 });
 
+// Fetch all runs for a user
+app.get('/api/all-runs', requireAuth, async (req, res) => {
+    try {
+        const result = await pool.query(
+            `SELECT 
+                distance_km, 
+                duration_min, 
+                difficulty,
+                TO_CHAR(created_at, 'YYYY-MM-DD') as run_date
+             FROM runs 
+             WHERE user_id = $1 
+             ORDER BY created_at DESC`,
+            [req.session.userId]
+        );
+
+        res.json(result.rows);
+    } catch (error) {
+        console.error('Hiba az összes futás lekérésekor:', error);
+        res.status(500).json({ error: 'Szerver hiba' });
+    }
+});
+
 
 // Új futás hozzáadása API végpont
 app.post('/api/add-run', requireAuth, async (req, res) => {

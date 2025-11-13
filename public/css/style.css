@@ -778,3 +778,82 @@ button:disabled {
     min-height: 300px; /* Biztosítja a minimális magasságot */
     width: 100%;
 }
+
+/* All Runs Section Styles */
+.all-runs-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.toggle-button {
+    background: none;
+    border: none;
+    font-size: 1.5em;
+    cursor: pointer;
+    padding: 0;
+    color: #1890ff;
+    transition: transform 0.3s ease;
+}
+
+.toggle-button.active {
+    transform: rotate(180deg);
+}
+
+.all-runs-container {
+    overflow-x: auto;
+}
+
+.runs-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+.runs-table thead {
+    background-color: #f0f2f5;
+    border-bottom: 2px solid #d9d9d9;
+}
+
+.runs-table th {
+    padding: 12px 15px;
+    text-align: left;
+    font-weight: 600;
+    color: #666;
+    font-size: 0.95em;
+}
+
+.runs-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.runs-table tbody tr:hover {
+    background-color: #fafafa;
+}
+
+.runs-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.difficulty-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-weight: 600;
+    color: white;
+    font-size: 0.9em;
+}
+
+.difficulty-badge.easy {
+    background-color: #52c41a;
+}
+
+.difficulty-badge.medium {
+    background-color: #faad14;
+}
+
+.difficulty-badge.hard {
+    background-color: #f5222d;
+}

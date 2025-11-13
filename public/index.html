@@ -67,10 +67,35 @@
                     <a href="dashboards.html">Go to Dashboards</a>
                 </article>
 
+                <article class="card all-runs-card" style="margin-top: 20px;">
+                    <div class="all-runs-header">
+                        <h3>All Runs</h3>
+                        <button id="allRunsToggle" class="toggle-button">▼</button>
+                    </div>
+                    <div id="allRunsContainer" class="all-runs-container" style="display: none;">
+                        <table class="runs-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Distance (km)</th>
+                                    <th>Duration</th>
+                                    <th>Difficulty</th>
+                                </tr>
+                            </thead>
+                            <tbody id="runsTableBody">
+                                <tr>
+                                    <td colspan="4" style="text-align: center; padding: 20px;">Loading runs...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </article>
+
             </section>
         </main>
     </div>
     
     <script src="js/client.js"></script>
+    <script src="js/all-runs.js"></script>
 </body>
 </html>
