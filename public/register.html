@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="hu">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Regisztráció - Running App</title>
+    <title>Sign Up - Running App</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -14,7 +14,7 @@
             <h2>Create Account</h2>
                     <form id="registerForm" class="registration-form">
                         <div class="form-group">
-                            <label for="username">Felhasználónév</label>
+                            <label for="username">Username</label>
                             <input type="text" id="username" name="username" required>
                         </div>
                         <div class="form-group">
@@ -22,24 +22,24 @@
                             <input type="email" id="email" name="email" required>
                         </div>
                         <div class="form-group">
-                            <label for="password">Jelszó</label>
+                            <label for="password">Password</label>
                             <input type="password" id="password" name="password" required>
                         </div>
                         <div class="form-group">
-                            <label for="gender">Nem</label>
+                            <label for="gender">Gender</label>
                             <select id="gender" name="gender" required>
-                                <option value="">Válassz nemet</option>
-                                <option value="male">Férfi</option>
-                                <option value="female">Nő</option>
+                                <option value="">Choose gender</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="birth_year">Születési dátum</label>
+                            <label for="birth_year">Birth Date</label>
                             <input type="date" id="birth_year" name="birth_year" required>
                         </div>
                         <div id="message" class="message"></div>
-                        <button type="submit" class="submit-button">Regisztráció</button>
-                        <p class="auth-switch">Már van fiókod? <a href="login.html">Bejelentkezés</a></p>
+                        <button type="submit" class="submit-button">Sign Up</button>
+                        <p class="auth-switch">Already have an account? <a href="login.html">Sign In</a></p>
                     </form>
                 </div>
     </div>

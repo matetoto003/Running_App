@@ -33,88 +33,88 @@ app.get('/api/test', (req, res) => {
     res.json({
         message: 'API működik',
         session: req.session,
-        user: req.session.userId ? 'Bejelentkezve' : 'Nincs bejelentkezve'
+        user: req.session.userId ? 'Logged in' : 'Not logged in'
     });
 });
 
-// Regisztráció endpoint
+// Registration endpoint
 app.post('/api/register', async (req, res) => {
     try {
         const { username, email, password, gender, birth_year } = req.body;
 
-        // Validáció
+        // Validation
         if (!username || !email || !password || !gender || !birth_year) {
-            return res.status(400).json({ error: 'Minden mező kitöltése kötelező' });
+            return res.status(400).json({ error: 'All fields are required' });
         }
 
-        // Ellenőrizzük, hogy létezik-e már a felhasználó
+        // Check if user already exists
         const userExists = await pool.query(
             'SELECT * FROM public.users WHERE username = $1 OR email = $2',
             [username, email]
         );
 
         if (userExists.rows.length > 0) {
-            return res.status(400).json({ error: 'Felhasználónév vagy email már létezik' });
+            return res.status(400).json({ error: 'Username or email already exists' });
         }
 
-        // Jelszó hash-elés (10 salt rounds)
+        // Hash password (10 salt rounds)
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // Felhasználó mentése
+        // Save user
         const newUser = await pool.query(
             'INSERT INTO public.users (username, email, password_hash, gender, birth_year) VALUES ($1, $2, $3, $4, $5) RETURNING user_id, username, email, gender, birth_year',
             [username, email, hashedPassword, gender, birth_year]
         );
 
         res.status(201).json({ 
-            message: 'Sikeres regisztráció',
+            message: 'Registration successful',
             user: newUser.rows[0]
         });
 
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: 'Szerver hiba' });
+        res.status(500).json({ error: 'Server error' });
     }
 });
 
-// Bejelentkezés endpoint
+// Login endpoint
 app.post('/api/login', async (req, res) => {
     try {
         const { username, password } = req.body;
 
-        // Felhasználó keresése
+        // Search for user
         const result = await pool.query(
             'SELECT * FROM users WHERE username = $1',
             [username]
         );
 
         if (result.rows.length === 0) {
-            return res.status(401).json({ error: 'Hibás felhasználónév vagy jelszó' });
+            return res.status(401).json({ error: 'Invalid username or password' });
         }
 
         const user = result.rows[0];
 
-        // Jelszó ellenőrzés
+        // Check password
         const validPassword = await bcrypt.compare(password, user.password_hash);
 
         if (!validPassword) {
-            return res.status(401).json({ error: 'Hibás felhasználónév vagy jelszó' });
+            return res.status(401).json({ error: 'Invalid username or password' });
         }
 
-        // Session beállítás
-        req.session.userId = user.user_id; // Változtatás: user.id helyett user.user_id
+        // Set session
+        req.session.userId = user.user_id;
         req.session.username = user.username;
         
-        // Session mentése
+        // Save session
         req.session.save((err) => {
             if (err) {
-                console.error('Session mentési hiba:', err);
-                return res.status(500).json({ error: 'Session mentési hiba' });
+                console.error('Session save error:', err);
+                return res.status(500).json({ error: 'Session save error' });
             }
             
-            console.log('Session beállítva:', req.session);
+            console.log('Session set:', req.session);
             res.json({ 
-                message: 'Sikeres bejelentkezés',
+                message: 'Login successful',
                 user: { 
                     id: user.user_id, 
                     username: user.username, 
@@ -125,32 +125,32 @@ app.post('/api/login', async (req, res) => {
 
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: 'Szerver hiba' });
+        res.status(500).json({ error: 'Server error' });
     }
 });
 
-// Kijelentkezés endpoint
+// Logout endpoint
 app.post('/api/logout', (req, res) => {
     req.session.destroy((err) => {
         if (err) {
-            return res.status(500).json({ error: 'Kijelentkezési hiba' });
+            return res.status(500).json({ error: 'Logout error' });
         }
-        res.json({ message: 'Sikeres kijelentkezés' });
+        res.json({ message: 'Logout successful' });
     });
 });
 
-// Authentikáció ellenőrzés middleware
+// Authentication check middleware
 const requireAuth = (req, res, next) => {
-    console.log('Session állapot:', req.session);
+    console.log('Session state:', req.session);
     if (!req.session.userId) {
-        console.log('Nincs bejelentkezve: session.userId hiányzik');
-        return res.status(401).json({ error: 'Nem vagy bejelentkezve' });
+        console.log('Not logged in: session.userId missing');
+        return res.status(401).json({ error: 'You are not logged in' });
     }
-    console.log('Felhasználó azonosítva:', req.session.userId);
+    console.log('User identified:', req.session.userId);
     next();
 };
 
-// Védett route - jelenlegi felhasználó adatai
+// Protected route - current user data
 app.get('/api/user', requireAuth, async (req, res) => {
     try {
         const result = await pool.query(
@@ -159,11 +159,11 @@ app.get('/api/user', requireAuth, async (req, res) => {
         );
         res.json(result.rows[0]);
     } catch (error) {
-        res.status(500).json({ error: 'Szerver hiba' });
+        res.status(500).json({ error: 'Server error' });
     }
 });
 
-// Dashboard statisztikák lekérése
+// Get dashboard statistics
 app.get('/api/dashboard-stats', requireAuth, async (req, res) => {
     try {
         const { period, startDate, endDate } = req.query;
@@ -186,7 +186,7 @@ app.get('/api/dashboard-stats', requireAuth, async (req, res) => {
         console.log('Period:', period);
         console.log('Date filter:', dateFilter);
 
-        // Összesített statisztikák lekérése
+        // Get aggregated statistics
         const statsQuery = `
             SELECT 
                 COUNT(*) as total_runs,
@@ -310,13 +310,13 @@ app.get('/api/dashboard-stats', requireAuth, async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Hiba a dashboard statisztikák lekérésekor:', error);
-        res.status(500).json({ error: 'Szerver hiba' });
+        console.error('Error fetching dashboard statistics:', error);
+        res.status(500).json({ error: 'Server error' });
     }
 });
 
-// Utolsó futás lekérése
-// Profile statisztikák lekérése
+// Get last run
+// Get profile statistics
 app.get('/api/profile-stats', requireAuth, async (req, res) => {
     try {
         console.log('Fetching stats for user:', req.session.userId); // Debug log
@@ -474,7 +474,7 @@ app.post('/api/change-username', requireAuth, async (req, res) => {
     }
 });
 
-// Új futás hozzáadása API végpont
+// Add new run API endpoint
 app.post('/api/add-run', requireAuth, async (req, res) => {
     try {
         const userId = req.session.userId;
@@ -519,7 +519,7 @@ app.post('/api/add-run', requireAuth, async (req, res) => {
 
         const result = await pool.query(query, values);
         res.status(201).json({ 
-            message: 'Futás sikeresen hozzáadva',
+            message: 'Run successfully added',
             run: result.rows[0]
         });
 
@@ -532,11 +532,11 @@ app.post('/api/add-run', requireAuth, async (req, res) => {
     }
 });
 
-// Statikus fájlok kiszolgálása
+// Serve static files
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.listen(PORT, () => {
-    console.log(`Szerver fut a ${PORT} porton`);
-    console.log('API végpontok elérhetőek a /api prefix-szel');
+    console.log(`Server running on port ${PORT}`);
+    console.log('API endpoints available at /api prefix');
 });
 

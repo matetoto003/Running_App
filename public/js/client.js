@@ -189,7 +189,7 @@ if (document.getElementById('registerForm')) {
 
             if (response.ok) {
                 messageDiv.className = 'message success';
-                messageDiv.textContent = 'Sikeres regisztráció! Átirányítás...';
+                messageDiv.textContent = 'Registration successful! Redirecting...';
                 setTimeout(() => window.location.href = 'login.html', 2000);
             } else {
                 messageDiv.className = 'message error';
@@ -224,7 +224,7 @@ if (document.getElementById('loginForm')) {
 
             if (response.ok) {
                 messageDiv.className = 'message success';
-                messageDiv.textContent = 'Sikeres bejelentkezés!';
+                messageDiv.textContent = 'Login successful!';
                 localStorage.setItem('user', JSON.stringify(data.user));
                 
                 // Átirányítás a FŐOLDALRA (index.html)
@@ -278,7 +278,7 @@ if (document.getElementById('addNewRunForm')) {
 
             if (response.ok) {
                 responseMessage.className = 'form-message success';
-                responseMessage.textContent = 'Futás sikeresen mentve! Átirányítás...';
+                responseMessage.textContent = 'Run successfully saved! Redirecting...';
                 setTimeout(() => window.location.href = 'dashboards.html', 1500);
             } else {
                 responseMessage.className = 'form-message error';

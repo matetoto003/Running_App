@@ -20,7 +20,7 @@ pool.query('SELECT NOW()', (err, res) => {
     if (err) {
         console.error('Hiba az adatbázis kapcsolódás során:', err);
     } else {
-        console.log('Adatbázis kapcsolat sikeres!');
+        console.log('Database connection successful!');
     }
 });
 
