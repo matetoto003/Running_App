@@ -383,8 +383,20 @@ button.submit-button:hover {
 }
 
 .dashboard-grid-top {
-    grid-template-columns: 1fr; /* chart full width, cards will appear below */
+    grid-template-columns: 3fr 1fr; /* bar chart 3/4, pie chart area 1/4 */
     align-items: start;
+}
+
+.left-column {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.right-column {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
 }
 
 /* Chart Styles */
@@ -394,6 +406,12 @@ button.submit-button:hover {
 }
 
 .main-chart h3 {
+    margin-bottom: 15px;
+    font-size: 1.2em;
+    color: #666;
+}
+
+.pie-chart-card h3 {
     margin-bottom: 15px;
     font-size: 1.2em;
     color: #666;
@@ -744,4 +762,19 @@ button:disabled {
 .training-session input[type="checkbox"]:checked + .session-label {
     color: #888;
     text-decoration: line-through;
+}
+
+/* Kördiagram kártya stílusa */
+.pie-chart-card {
+    /* Match the height of the main chart */
+    height: 400px; 
+    display: flex;
+    flex-direction: column;
+}
+
+.pie-chart-container {
+    position: relative;
+    flex-grow: 1; /* Kitölti a kártya maradék helyét */
+    min-height: 300px; /* Biztosítja a minimális magasságot */
+    width: 100%;
 }

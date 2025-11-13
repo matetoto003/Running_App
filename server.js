@@ -279,9 +279,24 @@ app.get('/api/dashboard-stats', requireAuth, async (req, res) => {
             `;
         }
 
-        const [stats, timeSeries] = await Promise.all([
+        // Nehézségi eloszlás lekérdezése (PIE CHART ADAT)
+        const difficultyQuery = `
+            SELECT 
+                difficulty, 
+                COUNT(*) as count 
+            FROM runs 
+            WHERE 
+                user_id = $1 AND ${dateFilter} AND difficulty IS NOT NULL 
+            GROUP BY 
+                difficulty 
+            ORDER BY 
+                difficulty DESC
+        `;
+
+        const [stats, timeSeries, difficulty] = await Promise.all([
             pool.query(statsQuery, [req.session.userId]),
-            pool.query(timeSeriesQuery, [req.session.userId])
+            pool.query(timeSeriesQuery, [req.session.userId]),
+            pool.query(difficultyQuery, [req.session.userId])
         ]);
 
         console.log('Period:', period);
@@ -290,7 +305,8 @@ app.get('/api/dashboard-stats', requireAuth, async (req, res) => {
         // Send both the stats and timeSeries data in the response
         res.json({
             stats: stats.rows[0],
-            timeSeries: timeSeries.rows
+            timeSeries: timeSeries.rows,
+            difficulty: difficulty.rows
         });
 
     } catch (error) {
@@ -407,3 +423,4 @@ app.listen(PORT, () => {
     console.log(`Szerver fut a ${PORT} porton`);
     console.log('API végpontok elérhetőek a /api prefix-szel');
 });
+
