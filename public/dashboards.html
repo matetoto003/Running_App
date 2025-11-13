@@ -27,8 +27,15 @@
 
         <main class="content-area">
             <header class="topbar">
+                <div class="theme-toggle-container">
+                    <input type="checkbox" id="themeToggle" class="theme-toggle">
+                    <label for="themeToggle" class="theme-toggle-label">
+                        <span class="theme-icon">☀️</span>
+                        <span class="theme-icon">🌙</span>
+                    </label>
+                </div>
                 <div class="user-profile">
-                    <button id="profileButton" class="profile-button"><span class="username"></span> ▼</button>
+                    <button type="button" id="profileButton" class="profile-button"><span class="username"></span> ▼</button>
                     <div id="profileMenu" class="profile-menu">
                         <div class="profile-info">
                             <div class="profile-header">
@@ -162,6 +169,7 @@
                 <!-- Profile Tab -->
                 <div class="settings-tabs">
                     <button class="settings-tab active" data-tab="profile">Profile</button>
+                    <button class="settings-tab" data-tab="theme">Theme</button>
                     <button class="settings-tab" data-tab="legal">Legal</button>
                 </div>
 
@@ -222,6 +230,19 @@
                     </div>
                 </div>
 
+                <!-- Theme Section -->
+                <div id="theme" class="settings-section">
+                    <h3>Theme Settings</h3>
+                    <div class="theme-setting-group">
+                        <label for="themeSettingToggle" class="theme-setting-label">
+                            <span>Dark Mode</span>
+                            <input type="checkbox" id="themeSettingToggle" class="theme-setting-toggle">
+                            <span class="theme-toggle-slider"></span>
+                        </label>
+                        <p class="theme-setting-description">Switch between light and dark theme for comfortable viewing</p>
+                    </div>
+                </div>
+
                 <!-- Legal Section -->
                 <div id="legal" class="settings-section">
                     <div class="legal-content">
@@ -240,6 +261,7 @@
         </div>
     </div>
     
+    <script src="js/theme.js"></script>
     <script src="js/client.js"></script>
     <script src="js/dashboard.js"></script>
     <script src="js/settings.js"></script>

@@ -1,11 +1,48 @@
-/* === GLOBÁLIS ÉS ALAP STÍLUSOK === */
+/* === THEME VARIABLES === */
+:root {
+    --bg-primary: #f7f7f9;
+    --bg-secondary: #ffffff;
+    --bg-tertiary: #f0f0f0;
+    --text-primary: #1a1a1a;
+    --text-secondary: #666666;
+    --text-tertiary: #999999;
+    --border-color: #d9d9d9;
+    --primary-color: #1890ff;
+    --accent-color: #52c41a;
+    --danger-color: #f5222d;
+    --warning-color: #faad14;
+    --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    --hover-bg: #f5f5f5;
+    --input-bg: #ffffff;
+    --input-border: #d9d9d9;
+    --input-focus-shadow: rgba(24, 144, 255, 0.2);
+}
+
+body.dark-theme {
+    --bg-primary: #1a1a1a;
+    --bg-secondary: #2a2a2a;
+    --bg-tertiary: #3a3a3a;
+    --text-primary: #e0e0e0;
+    --text-secondary: #b0b0b0;
+    --text-tertiary: #808080;
+    --border-color: #404040;
+    --primary-color: #40a9ff;
+    --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.45);
+    --hover-bg: #333333;
+    --input-bg: #2a2a2a;
+    --input-border: #404040;
+    --input-focus-shadow: rgba(64, 169, 255, 0.2);
+}
+
+/* === GLOBAL AND BASE STYLES === */
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f7f7f9; /* Fő alkalmazás háttere */
-    color: #1a1a1a;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
     font-size: 16px;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -15,10 +52,10 @@ h1, h2, h3, h4, h5, h6 {
 
 a {
     text-decoration: none;
-    color: #1890ff;
+    color: var(--primary-color);
 }
 
-/* === LOGIN ÉS REGISZTRÁCIÓS OLDALAK STÍLUSA === */
+/* === LOGIN AND REGISTRATION PAGES === */
 .auth-container {
     display: flex;
     flex-direction: column;
@@ -32,7 +69,7 @@ a {
     font-size: 2.5em;
     margin-bottom: 30px;
     text-align: center;
-    color: #1890ff;
+    color: var(--primary-color);
 }
 
 .login-card,
@@ -45,7 +82,7 @@ a {
 
 .welcome-text {
     text-align: center;
-    color: #666;
+    color: var(--text-secondary);
     font-size: 1.1em;
     margin-bottom: 15px;
 }
@@ -53,7 +90,7 @@ a {
 .login-card h2,
 .registration-card h2 {
     margin-bottom: 30px;
-    color: #333;
+    color: var(--text-primary);
     text-align: center;
 }
 
@@ -72,11 +109,11 @@ a {
 .auth-switch {
     text-align: center;
     margin-top: 20px;
-    color: #666;
+    color: var(--text-secondary);
 }
 
 .auth-switch a {
-    color: #1890ff;
+    color: var(--primary-color);
     font-weight: 600;
     text-decoration: none;
 }
@@ -86,37 +123,38 @@ a {
 }
 
 .nav-description {
-    color: #666;
+    color: var(--text-secondary);
     padding: 0 20px;
     margin-top: 5px;
     font-size: 0.9em;
 }
 
-/* === FŐ ALKALMAZÁS ELRENDEZÉSE (OLDALSÁV + TARTALOM) === */
+/* === MAIN APPLICATION LAYOUT (SIDEBAR + CONTENT) === */
 .app-container {
     display: flex;
     min-height: 100vh;
 }
 
-/* 1. OLDALSÁV (SIDEBAR) */
+/* 1. SIDEBAR */
 .sidebar {
     width: 250px;
-    background-color: #ffffff;
+    background-color: var(--bg-secondary);
     padding: 20px 0;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05);
     display: flex;
     flex-direction: column;
     flex-shrink: 0;
-    position: fixed; /* Rögzített oldalsáv */
+    position: fixed;
     height: 100%;
     z-index: 1000;
+    transition: background-color 0.3s ease;
 }
 
 .logo {
     font-weight: 700;
     font-size: 1.4em;
     padding: 0 20px 30px;
-    color: #000;
+    color: var(--text-primary);
 }
 
 .main-nav {
@@ -125,7 +163,7 @@ a {
 
 .nav-title {
     font-size: 0.8em;
-    color: #888;
+    color: var(--text-secondary);
     text-transform: uppercase;
     margin-top: 20px;
     margin-bottom: 5px;
@@ -143,7 +181,7 @@ a {
     align-items: center;
     padding: 10px 15px;
     margin: 5px 0;
-    color: #444;
+    color: var(--text-primary);
     text-decoration: none;
     border-radius: 8px;
     transition: background-color 0.2s, color 0.2s;
@@ -151,13 +189,13 @@ a {
 }
 
 .nav-item.active {
-    background-color: #f0f5ff; /* Kiemelt háttér */
-    color: #1890ff; /* Kiemelt szövegszín */
+    background-color: rgba(24, 144, 255, 0.1);
+    color: var(--primary-color);
     font-weight: 600;
 }
 
 .nav-item:hover:not(.active) {
-    background-color: #f4f4f4;
+    background-color: var(--hover-bg);
 }
 
 /* 2. FŐ TARTALOM TERÜLET (JOBB OLDAL) */
@@ -174,9 +212,10 @@ a {
     justify-content: flex-end;
     align-items: center;
     padding-bottom: 20px;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid var(--border-color);
     margin-bottom: 30px;
     position: relative;
+    background: transparent;
 }
 
 
@@ -190,12 +229,12 @@ a {
     padding: 8px 15px;
     cursor: pointer;
     font-size: 1rem;
-    color: #333;
+    color: var(--text-primary);
     border-radius: 4px;
 }
 
 .profile-button:hover {
-    background-color: #f0f0f0;
+    background-color: var(--bg-tertiary);
 }
 
 .profile-menu {
@@ -203,9 +242,9 @@ a {
     position: absolute;
     right: 0;
     top: 100%;
-    background: white;
+    background: transparent;
     border-radius: 8px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    box-shadow: none;
     min-width: 240px;
     z-index: 1000;
 }
@@ -225,7 +264,7 @@ a {
 .profile-header .username {
     font-size: 1.2em;
     font-weight: 600;
-    color: #333;
+    color: var(--text-primary);
 }
 
 .profile-details {
@@ -237,14 +276,14 @@ a {
 .profile-stat {
     text-align: center;
     padding: 8px;
-    background: #f8f9fa;
+    background: var(--bg-tertiary);
     border-radius: 6px;
 }
 
 .profile-stat .stat-label {
     display: block;
     font-size: 0.8em;
-    color: #666;
+    color: var(--text-secondary);
     margin-bottom: 4px;
 }
 
@@ -252,52 +291,54 @@ a {
     display: block;
     font-size: 1.1em;
     font-weight: 600;
-    color: #333;
+    color: var(--text-primary);
 }
 
 .profile-menu-divider {
     height: 1px;
-    background-color: #eee;
+    background-color: var(--border-color);
     margin: 8px 0;
 }
 
 .profile-menu .menu-item {
     display: block;
     padding: 12px 16px;
-    color: #333;
+    color: var(--text-primary);
     text-decoration: none;
+    transition: background-color 0.2s ease;
 }
 
 .profile-menu .menu-item:hover {
-    background-color: #f0f0f0;
+    background-color: var(--hover-bg);
 }
 
 .profile-menu .menu-item.logout {
-    color: #dc3545;
+    color: var(--danger-color);
 }
 
 .profile-menu .menu-item.logout:hover {
-    background-color: #ffebee;
+    background-color: rgba(245, 34, 45, 0.1);
 }
 
-/* 3. OLDAL SPECIFIKUS TARTALOM */
+/* 3. PAGE SPECIFIC CONTENT */
 .page-content h2 {
     font-size: 2.2em;
     font-weight: 700;
     margin-bottom: 40px;
-    color: #000;
+    color: var(--text-primary);
 }
 
-/* 4. ÁLTALÁNOS KÁRTYA STÍLUS */
+/* 4. GENERAL CARD STYLE */
 .card {
-    background-color: #ffffff;
+    background-color: var(--bg-secondary);
     padding: 25px;
     border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+    box-shadow: var(--card-shadow);
     margin-bottom: 20px;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* === 'ADD NEW RUN' ŰRLAP STÍLUS === */
+/* === ADD NEW RUN FORM STYLE === */
 .run-form {
     max-width: 700px;
 }
@@ -310,23 +351,37 @@ a {
     display: block;
     margin-bottom: 8px;
     font-weight: 600;
-    color: #333;
+    color: var(--text-primary);
+    transition: color 0.3s ease;
 }
 
-.form-group input {
+.form-group input,
+.form-group select,
+.form-group textarea {
     width: 100%;
     padding: 12px;
-    border: 1px solid #ccc;
+    border: 1px solid var(--input-border);
     border-radius: 6px;
     font-size: 1rem;
-    box-sizing: border-box; /* Fontos, hogy a padding ne növelje a szélességet */
+    box-sizing: border-box;
+    background-color: var(--input-bg);
+    color: var(--text-primary);
+    transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 2px var(--input-focus-shadow);
 }
 
 button.submit-button {
     padding: 12px 25px;
     border: none;
     border-radius: 6px;
-    background-color: #1890ff;
+    background-color: var(--primary-color);
     color: white;
     font-size: 1rem;
     font-weight: 600;
@@ -349,7 +404,7 @@ button.submit-button:hover {
 .period-selector {
     display: flex;
     gap: 10px;
-    background: white;
+    background: var(--bg-secondary);
     padding: 5px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
@@ -362,17 +417,17 @@ button.submit-button:hover {
     border-radius: 6px;
     cursor: pointer;
     font-size: 0.9rem;
-    color: #666;
+    color: var(--text-secondary);
     transition: all 0.3s ease;
 }
 
 .period-button:hover {
-    background-color: #f0f0f0;
-    color: #333;
+    background-color: var(--hover-bg);
+    color: var(--text-primary);
 }
 
 .period-button.active {
-    background-color: #1890ff;
+    background-color: var(--primary-color);
     color: white;
 }
 
@@ -408,13 +463,13 @@ button.submit-button:hover {
 .main-chart h3 {
     margin-bottom: 15px;
     font-size: 1.2em;
-    color: #666;
+    color: var(--text-secondary);
 }
 
 .pie-chart-card h3 {
     margin-bottom: 15px;
     font-size: 1.2em;
-    color: #666;
+    color: var(--text-secondary);
 }
 
 .chart-container {
@@ -436,7 +491,7 @@ canvas {
 
 .stat-card .stat-label {
     font-size: 0.9em;
-    color: #888;
+    color: var(--text-secondary);
     margin-bottom: 5px;
     text-transform: uppercase;
 }
@@ -456,7 +511,7 @@ canvas {
     width: 20px;
     height: 20px;
     border-radius: 50%;
-    background-color: #1890ff;
+    background-color: var(--primary-color);
     color: white;
     display: flex;
     align-items: center;
@@ -478,12 +533,12 @@ canvas {
     font-size: 2.5em;
     font-weight: 700;
     margin: 5px 0;
-    color: #1a1a1a;
+    color: var(--text-primary);
 }
 
 .stat-card small {
     font-size: 0.85em;
-    color: #00a000; /* Pozitív visszajelzés */
+    color: var(--accent-color); /* Pozitív visszajelzés */
 }
 
 .dashboard-grid-bottom {
@@ -514,7 +569,7 @@ canvas {
 }
 
 .plan-duration {
-    color: #888;
+    color: var(--text-secondary);
     font-size: 0.9em;
     margin-bottom: 20px;
 }
@@ -522,14 +577,14 @@ canvas {
 .progress-container {
     margin: 15px 0;
     padding: 10px;
-    background-color: #f5f5f5;
+    background-color: var(--bg-tertiary);
     border-radius: 6px;
 }
 
 .progress-bar {
     width: 100%;
     height: 8px;
-    background-color: #e0e0e0;
+    background-color: var(--border-color);
     border-radius: 4px;
     overflow: hidden;
     margin-bottom: 5px;
@@ -544,7 +599,7 @@ canvas {
 
 .progress-text {
     font-size: 0.8em;
-    color: #666;
+    color: var(--text-secondary);
     margin: 5px 0 0 0;
     font-weight: 600;
 }
@@ -552,7 +607,7 @@ canvas {
 .btn-start {
     display: inline-block;
     padding: 10px 20px;
-    background-color: #1890ff;
+    background-color: var(--primary-color);
     color: white;
     text-decoration: none;
     border-radius: 6px;
@@ -582,7 +637,7 @@ canvas {
 }
 .info-card p {
     line-height: 1.6;
-    color: #444;
+    color: var(--text-primary);
 }
 
 .heart-rate-section h3 {
@@ -600,7 +655,7 @@ canvas {
 .heart-rate-section .hr-summary {
     margin-top: 15px;
     font-weight: 500;
-    color: #333;
+    color: var(--text-primary);
 }
 
 /* === ÜZENET ÉS FORM VISSZAJELZÉSEK === */
@@ -617,22 +672,22 @@ canvas {
 }
 
 .form-message.error {
-    background-color: #ffebee;
-    color: #c62828;
-    border: 1px solid #ffcdd2;
+    background-color: rgba(245, 34, 45, 0.1);
+    color: #f5222d;
+    border: 1px solid rgba(245, 34, 45, 0.3);
 }
 
 .form-message.success {
-    background-color: #e8f5e9;
-    color: #2e7d32;
-    border: 1px solid #c8e6c9;
+    background-color: rgba(82, 196, 26, 0.1);
+    color: #52c41a;
+    border: 1px solid rgba(82, 196, 26, 0.3);
 }
 
 /* Gomb állapotok */
 button:disabled {
     opacity: 0.7;
     cursor: not-allowed;
-    background-color: #ccc;
+    background-color: var(--border-color) !important;
 }
 
 /* === MODAL ABLAK STÍLUSA === */
@@ -659,7 +714,7 @@ button:disabled {
 }
 
 .modal-content {
-    background-color: #fefefe;
+    background-color: var(--bg-secondary);
     margin: 5% auto;
     padding: 30px;
     border-radius: 12px;
@@ -667,6 +722,7 @@ button:disabled {
     max-width: 600px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
     animation: slideIn 0.3s ease-in;
+    color: var(--text-primary);
 }
 
 @keyframes slideIn {
@@ -681,7 +737,7 @@ button:disabled {
 }
 
 .close {
-    color: #aaa;
+    color: var(--text-secondary);
     float: right;
     font-size: 28px;
     font-weight: bold;
@@ -691,13 +747,13 @@ button:disabled {
 
 .close:hover,
 .close:focus {
-    color: #000;
+    color: var(--text-primary);
 }
 
 #modalTitle {
     margin-top: 0;
-    color: #333;
-    border-bottom: 2px solid #1890ff;
+    color: var(--text-primary);
+    border-bottom: 2px solid var(--primary-color);
     padding-bottom: 15px;
 }
 
@@ -711,10 +767,10 @@ button:disabled {
 
 .week-title {
     font-size: 1.3em;
-    color: #1890ff;
+    color: var(--primary-color);
     margin: 20px 0 15px 0;
     padding-bottom: 10px;
-    border-bottom: 2px solid #1890ff;
+    border-bottom: 2px solid var(--primary-color);
     font-weight: 600;
 }
 
@@ -733,14 +789,15 @@ button:disabled {
     align-items: center;
     padding: 12px;
     margin-bottom: 0;
-    background-color: #f9f9f9;
+    background-color: var(--bg-secondary);
     border-radius: 6px;
-    border-left: 4px solid #1890ff;
+    border-left: 4px solid var(--primary-color);
     transition: all 0.3s ease;
+    color: var(--text-primary);
 }
 
 .training-session:hover {
-    background-color: #f0f5ff;
+    background-color: var(--hover-bg);
     box-shadow: 0 2px 8px rgba(24, 144, 255, 0.1);
 }
 
@@ -749,18 +806,18 @@ button:disabled {
     height: 20px;
     margin-right: 15px;
     cursor: pointer;
-    accent-color: #1890ff;
+    accent-color: var(--primary-color);
 }
 
 .session-label {
     flex: 1;
     cursor: pointer;
     user-select: none;
-    color: #333;
+    color: var(--text-primary);
 }
 
 .training-session input[type="checkbox"]:checked + .session-label {
-    color: #888;
+    color: var(--text-secondary);
     text-decoration: line-through;
 }
 
@@ -793,7 +850,7 @@ button:disabled {
     font-size: 1.5em;
     cursor: pointer;
     padding: 0;
-    color: #1890ff;
+    color: var(--primary-color);
     transition: transform 0.3s ease;
 }
 
@@ -812,25 +869,26 @@ button:disabled {
 }
 
 .runs-table thead {
-    background-color: #f0f2f5;
-    border-bottom: 2px solid #d9d9d9;
+    background-color: var(--bg-tertiary);
+    border-bottom: 2px solid var(--border-color);
 }
 
 .runs-table th {
     padding: 12px 15px;
     text-align: left;
     font-weight: 600;
-    color: #666;
+    color: var(--text-secondary);
     font-size: 0.95em;
 }
 
 .runs-table td {
     padding: 12px 15px;
-    border-bottom: 1px solid #f0f0f0;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-primary);
 }
 
 .runs-table tbody tr:hover {
-    background-color: #fafafa;
+    background-color: var(--hover-bg);
 }
 
 .runs-table tbody tr:last-child td {
@@ -887,7 +945,7 @@ button:disabled {
 }
 
 .modal-content {
-    background-color: #fff;
+    background-color: var(--bg-secondary);
     padding: 0;
     border-radius: 8px;
     width: 90%;
@@ -902,14 +960,14 @@ button:disabled {
     justify-content: space-between;
     align-items: center;
     padding: 20px;
-    border-bottom: 1px solid #f0f0f0;
-    background-color: #fafafa;
+    border-bottom: 1px solid var(--border-color);
+    background-color: var(--bg-tertiary);
 }
 
 .modal-header h2 {
     margin: 0;
     font-size: 1.5em;
-    color: #1a1a1a;
+    color: var(--text-primary);
 }
 
 .modal-close {
@@ -917,7 +975,7 @@ button:disabled {
     border: none;
     font-size: 1.5em;
     cursor: pointer;
-    color: #999;
+    color: var(--text-secondary);
     padding: 0;
     width: 30px;
     height: 30px;
@@ -948,19 +1006,19 @@ button:disabled {
     padding: 12px 20px;
     cursor: pointer;
     font-size: 1em;
-    color: #999;
+    color: var(--text-secondary);
     border-bottom: 3px solid transparent;
     transition: all 0.3s ease;
     margin-bottom: -2px;
 }
 
 .settings-tab:hover {
-    color: #1890ff;
+    color: var(--primary-color);
 }
 
 .settings-tab.active {
-    color: #1890ff;
-    border-bottom-color: #1890ff;
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
 }
 
 .settings-section {
@@ -997,7 +1055,7 @@ button:disabled {
 .settings-section label {
     display: block;
     margin-bottom: 8px;
-    color: #666;
+    color: var(--text-secondary);
     font-weight: 500;
     font-size: 0.95em;
 }
@@ -1007,22 +1065,24 @@ button:disabled {
 .settings-section input[type="email"] {
     width: 100%;
     padding: 10px 12px;
-    border: 1px solid #d9d9d9;
+    border: 1px solid var(--input-border);
     border-radius: 4px;
     font-size: 1em;
     transition: border-color 0.3s ease;
+    background-color: var(--input-bg);
+    color: var(--text-primary);
 }
 
 .settings-section input[type="text"]:focus,
 .settings-section input[type="password"]:focus,
 .settings-section input[type="email"]:focus {
-    border-color: #1890ff;
+    border-color: var(--primary-color);
     outline: none;
-    box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+    box-shadow: 0 0 0 2px var(--input-focus-shadow);
 }
 
 .settings-section input[readonly] {
-    background-color: #fafafa;
+    background-color: var(--bg-tertiary);
     cursor: not-allowed;
 }
 
@@ -1032,10 +1092,10 @@ button:disabled {
     justify-content: space-between;
     align-items: center;
     padding: 15px;
-    background-color: #fafafa;
+    background-color: var(--bg-tertiary);
     border-radius: 4px;
     margin-bottom: 15px;
-    border: 1px solid #e8e8e8;
+    border: 1px solid var(--border-color);
 }
 
 .account-field .field-content {
@@ -1044,7 +1104,7 @@ button:disabled {
 
 .account-field .field-content label {
     display: block;
-    color: #666;
+    color: var(--text-secondary);
     font-weight: 500;
     font-size: 0.95em;
     margin-bottom: 5px;
@@ -1052,13 +1112,13 @@ button:disabled {
 
 .masked-value {
     font-size: 1em;
-    color: #1a1a1a;
+    color: var(--text-primary);
     font-family: 'Courier New', monospace;
     letter-spacing: 2px;
 }
 
 .small-btn {
-    background-color: #1890ff;
+    background-color: var(--primary-color);
     color: white;
     padding: 8px 16px;
     border: none;
@@ -1076,17 +1136,18 @@ button:disabled {
 }
 
 .small-btn:disabled {
-    background-color: #d9d9d9;
+    background-color: var(--border-color);
     cursor: not-allowed;
 }
 
 /* Change Form Styles */
 .change-form {
-    background-color: #f9f9f9;
+    background-color: var(--bg-secondary);
     padding: 15px;
     border-radius: 4px;
     margin-top: 10px;
-    border-left: 4px solid #1890ff;
+    border-left: 4px solid var(--primary-color);
+    color: var(--text-primary);
 }
 
 .change-form.hidden {
@@ -1100,7 +1161,7 @@ button:disabled {
 }
 
 .submit-button {
-    background-color: #52c41a;
+    background-color: var(--accent-color);
     color: white;
     padding: 10px 20px;
     border: none;
@@ -1116,13 +1177,13 @@ button:disabled {
 }
 
 .submit-button:disabled {
-    background-color: #d9d9d9;
+    background-color: var(--border-color);
     cursor: not-allowed;
 }
 
 .cancel-button {
-    background-color: #d9d9d9;
-    color: #666;
+    background-color: var(--bg-tertiary);
+    color: var(--text-secondary);
     padding: 10px 20px;
     border: none;
     border-radius: 4px;
@@ -1133,11 +1194,11 @@ button:disabled {
 }
 
 .cancel-button:hover {
-    background-color: #bfbf9f;
+    background-color: var(--hover-bg);
 }
 
 #changePasswordBtn {
-    background-color: #1890ff;
+    background-color: var(--primary-color);
     color: white;
     padding: 10px 20px;
     border: none;
@@ -1153,7 +1214,7 @@ button:disabled {
 }
 
 #changePasswordBtn:disabled {
-    background-color: #d9d9d9;
+    background-color: var(--border-color);
     cursor: not-allowed;
 }
 
@@ -1165,26 +1226,26 @@ button:disabled {
 }
 
 .form-message.success {
-    background-color: #f6ffed;
+    background-color: rgba(82, 196, 26, 0.1);
     color: #52c41a;
-    border: 1px solid #b7eb8f;
+    border: 1px solid rgba(82, 196, 26, 0.3);
     display: block;
 }
 
 .form-message.error {
-    background-color: #fff1f0;
+    background-color: rgba(245, 34, 45, 0.1);
     color: #f5222d;
-    border: 1px solid #ffccc7;
+    border: 1px solid rgba(245, 34, 45, 0.3);
     display: block;
 }
 
 .legal-content {
     line-height: 1.8;
-    color: #666;
+    color: var(--text-primary);
 }
 
 .legal-content h3 {
-    color: #1a1a1a;
+    color: var(--text-primary);
     margin-top: 20px;
     margin-bottom: 10px;
 }
@@ -1193,3 +1254,285 @@ button:disabled {
     margin: 10px 0;
     text-align: justify;
 }
+
+/* === THEME TOGGLE STYLES === */
+.theme-toggle-container {
+    display: none;
+    align-items: center;
+    margin-right: auto;
+}
+
+.theme-toggle {
+    display: none;
+}
+
+.theme-toggle-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 20px;
+    background-color: var(--bg-tertiary);
+    transition: background-color 0.3s ease;
+    user-select: none;
+}
+
+.theme-toggle-label:hover {
+    background-color: var(--hover-bg);
+}
+
+.theme-toggle-label .theme-icon {
+    display: none;
+}
+
+/* === THEME SETTING IN MODAL === */
+.theme-setting-group {
+    padding: 20px;
+    background-color: var(--bg-tertiary);
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+.theme-setting-label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    user-select: none;
+    color: var(--text-primary);
+    font-weight: 500;
+    gap: 15px;
+}
+
+.theme-setting-toggle {
+    display: none;
+}
+
+.theme-toggle-slider {
+    display: inline-block;
+    width: 50px;
+    height: 28px;
+    background-color: var(--border-color);
+    border-radius: 14px;
+    position: relative;
+    transition: background-color 0.3s ease;
+}
+
+.theme-toggle-slider::after {
+    content: '';
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    background-color: white;
+    border-radius: 50%;
+    top: 2px;
+    left: 2px;
+    transition: left 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.theme-setting-toggle:checked ~ .theme-toggle-slider {
+    background-color: var(--primary-color);
+}
+
+.theme-setting-toggle:checked ~ .theme-toggle-slider::after {
+    left: 24px;
+}
+
+.theme-setting-description {
+    margin: 12px 0 0 0;
+    color: var(--text-secondary);
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+/* === FIX TEXT VISIBILITY IN DARK MODE === */
+.settings-section {
+    color: var(--text-primary);
+}
+
+.settings-section h3 {
+    color: var(--text-primary);
+}
+
+.settings-section label {
+    color: var(--text-primary);
+}
+
+.form-group label {
+    color: var(--text-primary);
+}
+
+.legal-content {
+    color: var(--text-primary);
+}
+
+.legal-content h3 {
+    color: var(--text-primary);
+}
+
+.legal-content p {
+    color: var(--text-secondary);
+}
+
+.settings-section input[type="text"],
+.settings-section input[type="password"],
+.settings-section input[type="email"] {
+    color: var(--text-primary);
+}
+
+.modal-content {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.modal-header {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.modal-header h2 {
+    color: var(--text-primary);
+}
+
+.account-field {
+    background-color: var(--bg-tertiary);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+.field-content label {
+    color: var(--text-primary);
+}
+
+.masked-value {
+    color: var(--text-primary);
+}
+
+.form-message {
+    color: var(--text-secondary);
+}
+
+/* === DARK MODE FIXES FOR ALL ELEMENTS === */
+.logo {
+    color: var(--text-primary);
+}
+
+.nav-title {
+    color: var(--text-secondary);
+}
+
+.nav-item {
+    color: var(--text-secondary);
+}
+
+.nav-item:hover,
+.nav-item.active {
+    color: var(--primary-color);
+}
+
+.topbar {
+    background-color: transparent;
+}
+
+.page-content h2 {
+    color: var(--text-primary);
+}
+
+.card {
+    color: var(--text-primary);
+}
+
+.card h2,
+.card h3,
+.card h4,
+.card h5,
+.card h6 {
+    color: var(--text-primary);
+}
+
+.card p {
+    color: var(--text-secondary);
+}
+
+.stat-card {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    border-color: var(--border-color);
+}
+
+.stat-card h4 {
+    color: var(--text-primary);
+}
+
+.stat-card p {
+    color: var(--text-secondary);
+}
+
+.profile-button {
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+
+.profile-menu {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+.profile-header {
+    color: var(--text-primary);
+}
+
+.stat-label {
+    color: var(--text-secondary);
+}
+
+.stat-value {
+    color: var(--text-primary);
+}
+
+.profile-menu-divider {
+    background-color: var(--border-color);
+}
+
+.runs-table {
+    color: var(--text-primary);
+}
+
+.runs-table thead {
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+
+.runs-table tbody tr {
+    color: var(--text-primary);
+}
+
+.runs-table tbody tr:hover {
+    background-color: var(--hover-bg);
+}
+
+.runs-table td {
+    color: var(--text-secondary);
+    border-color: var(--border-color);
+}
+
+.difficulty-badge {
+    color: white;
+}
+
+.plan-card {
+    color: var(--text-primary);
+}
+
+.plan-card h3 {
+    color: var(--text-primary);
+}
+
+.plan-card p {
+    color: var(--text-secondary);
+}
+

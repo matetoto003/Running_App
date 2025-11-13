@@ -10,6 +10,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const usernameDisplay = document.getElementById('usernameDisplay');
     const passwordDisplay = document.getElementById('passwordDisplay');
 
+    // Theme Setting Elements
+    const themeSettingToggle = document.getElementById('themeSettingToggle');
+
     // Username Elements
     const changeUsernameBtn = document.getElementById('changeUsernameBtn');
     const changeUsernameForm = document.getElementById('changeUsernameForm');
@@ -32,187 +35,227 @@ document.addEventListener('DOMContentLoaded', () => {
     settingsButtons.forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.preventDefault();
-            settingsModal.classList.add('active');
-            loadCurrentUsername();
+            if (settingsModal) {
+                settingsModal.classList.add('active');
+                loadCurrentUsername();
+                syncThemeToggle();
+            }
+            // Close profile menu when opening settings
+            const profileMenu = document.getElementById('profileMenu');
+            if (profileMenu) {
+                profileMenu.classList.remove('active');
+            }
         });
     });
 
     // Close Settings Modal
-    closeBtn.addEventListener('click', () => {
-        settingsModal.classList.remove('active');
-        resetAllForms();
-    });
-
-    // Close modal when clicking outside
-    window.addEventListener('click', (e) => {
-        if (e.target === settingsModal) {
+    if (closeBtn) {
+        closeBtn.addEventListener('click', () => {
             settingsModal.classList.remove('active');
             resetAllForms();
-        }
-    });
+        });
+    }
+
+    // Close modal when clicking outside
+    if (settingsModal) {
+        window.addEventListener('click', (e) => {
+            if (e.target === settingsModal) {
+                settingsModal.classList.remove('active');
+                resetAllForms();
+            }
+        });
+    }
 
     // Tab switching
-    settingsTabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            const tabName = tab.getAttribute('data-tab');
-            
-            // Remove active class from all tabs and sections
-            settingsTabs.forEach(t => t.classList.remove('active'));
-            settingsSections.forEach(s => s.classList.remove('active'));
-            
-            // Add active class to clicked tab and corresponding section
-            tab.classList.add('active');
-            document.getElementById(tabName).classList.add('active');
+    if (settingsTabs && settingsTabs.length > 0) {
+        settingsTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabName = tab.getAttribute('data-tab');
+                
+                // Remove active class from all tabs and sections
+                settingsTabs.forEach(t => t.classList.remove('active'));
+                settingsSections.forEach(s => s.classList.remove('active'));
+                
+                // Add active class to clicked tab and corresponding section
+                tab.classList.add('active');
+                document.getElementById(tabName).classList.add('active');
+            });
         });
-    });
+    }
+
+    // Theme Toggle in Settings
+    if (themeSettingToggle) {
+        themeSettingToggle.addEventListener('change', () => {
+            const body = document.body;
+            if (themeSettingToggle.checked) {
+                body.classList.add('dark-theme');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                body.classList.remove('dark-theme');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+    }
 
     // Change Username Button - Show Form
-    changeUsernameBtn.addEventListener('click', () => {
-        changeUsernameForm.classList.remove('hidden');
-        changeUsernameBtn.style.display = 'none';
-        newUsernameInput.focus();
-    });
+    if (changeUsernameBtn) {
+        changeUsernameBtn.addEventListener('click', () => {
+            changeUsernameForm.classList.remove('hidden');
+            changeUsernameBtn.style.display = 'none';
+            newUsernameInput.focus();
+        });
+    }
 
     // Cancel Username Change
-    cancelUsernameBtn.addEventListener('click', () => {
-        changeUsernameForm.classList.add('hidden');
-        changeUsernameBtn.style.display = 'block';
-        newUsernameInput.value = '';
-        usernameMessage.textContent = '';
-        usernameMessage.className = 'form-message';
-    });
+    if (cancelUsernameBtn) {
+        cancelUsernameBtn.addEventListener('click', () => {
+            changeUsernameForm.classList.add('hidden');
+            changeUsernameBtn.style.display = 'block';
+            newUsernameInput.value = '';
+            usernameMessage.textContent = '';
+            usernameMessage.className = 'form-message';
+        });
+    }
 
     // Confirm Username Change
-    confirmUsernameBtn.addEventListener('click', async () => {
-        const newUsername = newUsernameInput.value.trim();
+    if (confirmUsernameBtn) {
+        confirmUsernameBtn.addEventListener('click', async () => {
+            const newUsername = newUsernameInput.value.trim();
 
-        if (!newUsername) {
-            showMessage(usernameMessage, 'Username cannot be empty', 'error');
-            return;
-        }
-
-        if (newUsername.length < 3) {
-            showMessage(usernameMessage, 'Username must be at least 3 characters', 'error');
-            return;
-        }
-
-        try {
-            confirmUsernameBtn.disabled = true;
-            confirmUsernameBtn.textContent = 'Changing...';
-
-            const response = await fetch('/api/change-username', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                credentials: 'include',
-                body: JSON.stringify({ newUsername })
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                showMessage(usernameMessage, 'Username changed successfully!', 'success');
-                usernameDisplay.textContent = newUsername;
-                setTimeout(() => {
-                    changeUsernameForm.classList.add('hidden');
-                    changeUsernameBtn.style.display = 'block';
-                    newUsernameInput.value = '';
-                    usernameMessage.textContent = '';
-                    usernameMessage.className = 'form-message';
-                }, 1500);
-            } else {
-                showMessage(usernameMessage, data.error || 'Failed to change username', 'error');
+            if (!newUsername) {
+                showMessage(usernameMessage, 'Username cannot be empty', 'error');
+                return;
             }
-        } catch (error) {
-            console.error('Error:', error);
-            showMessage(usernameMessage, 'An error occurred', 'error');
-        } finally {
-            confirmUsernameBtn.disabled = false;
-            confirmUsernameBtn.textContent = 'Confirm';
-        }
-    });
+
+            if (newUsername.length < 3) {
+                showMessage(usernameMessage, 'Username must be at least 3 characters', 'error');
+                return;
+            }
+
+            try {
+                confirmUsernameBtn.disabled = true;
+                confirmUsernameBtn.textContent = 'Changing...';
+
+                const response = await fetch('/api/change-username', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({ newUsername })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showMessage(usernameMessage, 'Username changed successfully!', 'success');
+                    usernameDisplay.textContent = newUsername;
+                    setTimeout(() => {
+                        changeUsernameForm.classList.add('hidden');
+                        changeUsernameBtn.style.display = 'block';
+                        newUsernameInput.value = '';
+                        usernameMessage.textContent = '';
+                        usernameMessage.className = 'form-message';
+                    }, 1500);
+                } else {
+                    showMessage(usernameMessage, data.error || 'Failed to change username', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showMessage(usernameMessage, 'An error occurred', 'error');
+            } finally {
+                confirmUsernameBtn.disabled = false;
+                confirmUsernameBtn.textContent = 'Confirm';
+            }
+        });
+    }
 
     // Change Password Button - Show Form
-    changePasswordBtn.addEventListener('click', () => {
-        changePasswordForm.classList.remove('hidden');
-        changePasswordBtn.style.display = 'none';
-        currentPasswordInput.focus();
-    });
+    if (changePasswordBtn) {
+        changePasswordBtn.addEventListener('click', () => {
+            changePasswordForm.classList.remove('hidden');
+            changePasswordBtn.style.display = 'none';
+            currentPasswordInput.focus();
+        });
+    }
 
     // Cancel Password Change
-    cancelPasswordBtn.addEventListener('click', () => {
-        changePasswordForm.classList.add('hidden');
-        changePasswordBtn.style.display = 'block';
-        currentPasswordInput.value = '';
-        newPasswordInput.value = '';
-        confirmPasswordInput.value = '';
-        passwordMessage.textContent = '';
-        passwordMessage.className = 'form-message';
-    });
+    if (cancelPasswordBtn) {
+        cancelPasswordBtn.addEventListener('click', () => {
+            changePasswordForm.classList.add('hidden');
+            changePasswordBtn.style.display = 'block';
+            currentPasswordInput.value = '';
+            newPasswordInput.value = '';
+            confirmPasswordInput.value = '';
+            passwordMessage.textContent = '';
+            passwordMessage.className = 'form-message';
+        });
+    }
 
     // Confirm Password Change
-    confirmPasswordBtn.addEventListener('click', async () => {
-        const currentPassword = currentPasswordInput.value;
-        const newPassword = newPasswordInput.value;
-        const confirmPassword = confirmPasswordInput.value;
+    if (confirmPasswordBtn) {
+        confirmPasswordBtn.addEventListener('click', async () => {
+            const currentPassword = currentPasswordInput.value;
+            const newPassword = newPasswordInput.value;
+            const confirmPassword = confirmPasswordInput.value;
 
-        // Validation
-        if (!currentPassword || !newPassword || !confirmPassword) {
-            showMessage(passwordMessage, 'All fields are required', 'error');
-            return;
-        }
+            // Validation
+            if (!currentPassword || !newPassword || !confirmPassword) {
+                showMessage(passwordMessage, 'All fields are required', 'error');
+                return;
+            }
 
-        if (newPassword !== confirmPassword) {
-            showMessage(passwordMessage, 'New passwords do not match', 'error');
-            return;
-        }
+            if (newPassword !== confirmPassword) {
+                showMessage(passwordMessage, 'New passwords do not match', 'error');
+                return;
+            }
 
-        if (newPassword.length < 6) {
-            showMessage(passwordMessage, 'New password must be at least 6 characters', 'error');
-            return;
-        }
+            if (newPassword.length < 6) {
+                showMessage(passwordMessage, 'New password must be at least 6 characters', 'error');
+                return;
+            }
 
-        try {
-            confirmPasswordBtn.disabled = true;
-            confirmPasswordBtn.textContent = 'Changing...';
+            try {
+                confirmPasswordBtn.disabled = true;
+                confirmPasswordBtn.textContent = 'Changing...';
 
-            const response = await fetch('/api/change-password', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                credentials: 'include',
-                body: JSON.stringify({
-                    currentPassword,
-                    newPassword
-                })
-            });
+                const response = await fetch('/api/change-password', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        currentPassword,
+                        newPassword
+                    })
+                });
 
-            const data = await response.json();
+                const data = await response.json();
 
-            if (response.ok) {
-                showMessage(passwordMessage, 'Password changed successfully!', 'success');
-                setTimeout(() => {
-                    changePasswordForm.classList.add('hidden');
-                    changePasswordBtn.style.display = 'block';
-                    currentPasswordInput.value = '';
-                    newPasswordInput.value = '';
+                if (response.ok) {
+                    showMessage(passwordMessage, 'Password changed successfully!', 'success');
+                    setTimeout(() => {
+                        changePasswordForm.classList.add('hidden');
+                        changePasswordBtn.style.display = 'block';
+                        currentPasswordInput.value = '';
+                        newPasswordInput.value = '';
                     confirmPasswordInput.value = '';
                     passwordMessage.textContent = '';
                     passwordMessage.className = 'form-message';
-                }, 1500);
-            } else {
-                showMessage(passwordMessage, data.error || 'Failed to change password', 'error');
+                    }, 1500);
+                } else {
+                    showMessage(passwordMessage, data.error || 'Failed to change password', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showMessage(passwordMessage, 'An error occurred', 'error');
+            } finally {
+                confirmPasswordBtn.disabled = false;
+                confirmPasswordBtn.textContent = 'Confirm';
             }
-        } catch (error) {
-            console.error('Error:', error);
-            showMessage(passwordMessage, 'An error occurred', 'error');
-        } finally {
-            confirmPasswordBtn.disabled = false;
-            confirmPasswordBtn.textContent = 'Confirm';
-        }
-    });
+        });
+    }
 
     function showMessage(element, message, type) {
         element.textContent = message;
@@ -240,10 +283,19 @@ document.addEventListener('DOMContentLoaded', () => {
         passwordMessage.className = 'form-message';
     }
 
+
     function loadCurrentUsername() {
         const usernameElement = document.querySelector('.username');
         if (usernameElement) {
             usernameDisplay.textContent = usernameElement.textContent;
         }
     }
+
+    function syncThemeToggle() {
+        const body = document.body;
+        if (themeSettingToggle) {
+            themeSettingToggle.checked = body.classList.contains('dark-theme');
+        }
+    }
 });
+

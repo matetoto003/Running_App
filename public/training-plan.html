@@ -26,8 +26,15 @@
 
         <main class="content-area">
             <header class="topbar">
+                <div class="theme-toggle-container">
+                    <input type="checkbox" id="themeToggle" class="theme-toggle">
+                    <label for="themeToggle" class="theme-toggle-label">
+                        <span class="theme-icon">☀️</span>
+                        <span class="theme-icon">🌙</span>
+                    </label>
+                </div>
                 <div class="user-profile">
-                    <button id="profileButton" class="profile-button"><span class="username"></span> ▼</button>
+                    <button type="button" id="profileButton" class="profile-button"><span class="username"></span> ▼</button>
                     <div id="profileMenu" class="profile-menu">
                         <div class="profile-info">
                             <div class="profile-header">
@@ -143,8 +150,113 @@
             </div>
         </main>
     </div>
+
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Settings</h2>
+                <button class="modal-close" id="closeSettings">&times;</button>
+            </div>
+            
+            <div class="modal-body">
+                <!-- Profile Tab -->
+                <div class="settings-tabs">
+                    <button class="settings-tab active" data-tab="profile">Profile</button>
+                    <button class="settings-tab" data-tab="theme">Theme</button>
+                    <button class="settings-tab" data-tab="legal">Legal</button>
+                </div>
+
+                <!-- Profile Section -->
+                <div id="profile" class="settings-section active">
+                    <h3>Account Information</h3>
+                    
+                    <!-- Username Field -->
+                    <div class="account-field">
+                        <div class="field-content">
+                            <label>Username</label>
+                            <div class="masked-value" id="usernameDisplay">*******</div>
+                        </div>
+                        <button class="small-btn" id="changeUsernameBtn">Change Username</button>
+                    </div>
+
+                    <!-- Password Field -->
+                    <div class="account-field">
+                        <div class="field-content">
+                            <label>Password</label>
+                            <div class="masked-value" id="passwordDisplay">*******</div>
+                        </div>
+                        <button class="small-btn" id="changePasswordBtn">Change Password</button>
+                    </div>
+
+                    <!-- Change Username Form (Hidden) -->
+                    <div id="changeUsernameForm" class="change-form hidden">
+                        <div class="form-group">
+                            <label for="newUsername">New Username</label>
+                            <input type="text" id="newUsername" name="newUsername" placeholder="Enter new username">
+                        </div>
+                        <div class="form-actions">
+                            <button class="submit-button" id="confirmUsernameBtn">Confirm</button>
+                            <button class="cancel-button" id="cancelUsernameBtn">Cancel</button>
+                        </div>
+                        <p class="form-message" id="usernameMessage"></p>
+                    </div>
+
+                    <!-- Change Password Form (Hidden) -->
+                    <div id="changePasswordForm" class="change-form hidden">
+                        <div class="form-group">
+                            <label for="currentPassword">Current Password</label>
+                            <input type="password" id="currentPassword" name="currentPassword" placeholder="Enter current password">
+                        </div>
+                        <div class="form-group">
+                            <label for="newPassword">New Password</label>
+                            <input type="password" id="newPassword" name="newPassword" placeholder="Enter new password">
+                        </div>
+                        <div class="form-group">
+                            <label for="confirmPassword">Confirm Password</label>
+                            <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm new password">
+                        </div>
+                        <div class="form-actions">
+                            <button class="submit-button" id="confirmPasswordBtn">Confirm</button>
+                            <button class="cancel-button" id="cancelPasswordBtn">Cancel</button>
+                        </div>
+                        <p class="form-message" id="passwordMessage"></p>
+                    </div>
+                </div>
+
+                <!-- Theme Section -->
+                <div id="theme" class="settings-section">
+                    <h3>Theme Settings</h3>
+                    <div class="theme-setting-group">
+                        <label for="themeSettingToggle" class="theme-setting-label">
+                            <span>Dark Mode</span>
+                            <input type="checkbox" id="themeSettingToggle" class="theme-setting-toggle">
+                            <span class="theme-toggle-slider"></span>
+                        </label>
+                        <p class="theme-setting-description">Switch between light and dark theme for comfortable viewing</p>
+                    </div>
+                </div>
+
+                <!-- Legal Section -->
+                <div id="legal" class="settings-section">
+                    <div class="legal-content">
+                        <h3>Terms of Use</h3>
+                        <p>By using this Running App, you agree to comply with all applicable laws and regulations. The app is provided "as is" without any warranties. We are not responsible for any data loss or service interruptions.</p>
+                        
+                        <h3>Contact Us</h3>
+                        <p>
+                            For questions or support, please reach out to us at:<br>
+                            <strong>Email:</strong> support@runningapp.com<br>
+                            <strong>Phone:</strong> +1 (555) 123-4567
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     
     <script src="js/client.js"></script>
+    <script src="js/settings.js"></script>
+    <script src="js/theme.js"></script>
     <script>
         // Edzéstervek adatai
         const trainingPlans = {
@@ -403,3 +515,5 @@
             modal.style.display = 'block';
         }
     </script>
+</body>
+</html>

@@ -53,6 +53,10 @@ function setupProfileMenu() {
     const logoutButton = document.getElementById('logoutButton');
     const usernameSpans = document.getElementsByClassName('username');
     
+    console.log('setupProfileMenu called');
+    console.log('profileButton:', profileButton);
+    console.log('profileMenu:', profileMenu);
+    
     // Betöltéskor állítsuk be a profile szöveget és a felhasználónevet a menüben
     const user = JSON.parse(localStorage.getItem('user'));
     
@@ -74,6 +78,7 @@ function setupProfileMenu() {
         
         // Profil menü megjelenítése/elrejtése
         profileButton.addEventListener('click', async (e) => {
+            console.log('Profile button clicked');
             e.stopPropagation();
             profileMenu.classList.toggle('active');
             
@@ -82,16 +87,6 @@ function setupProfileMenu() {
                 await fetchProfileStats();
             }
         });
-
-        // Settings gomb kezelése
-        const settingsButton = document.getElementById('settingsButton');
-        if (settingsButton) {
-            settingsButton.addEventListener('click', (e) => {
-                e.preventDefault();
-                // TODO: Implement settings functionality
-                console.log('Settings clicked');
-            });
-        }
 
         // Kattintás kezelése a dokumentumon
         document.addEventListener('click', (e) => {
