@@ -386,6 +386,93 @@ app.get('/api/all-runs', requireAuth, async (req, res) => {
     }
 });
 
+// Change password endpoint
+app.post('/api/change-password', requireAuth, async (req, res) => {
+    try {
+        const { currentPassword, newPassword } = req.body;
+        const userId = req.session.userId;
+
+        // Validate inputs
+        if (!currentPassword || !newPassword) {
+            return res.status(400).json({ error: 'Current password and new password are required' });
+        }
+
+        if (newPassword.length < 6) {
+            return res.status(400).json({ error: 'New password must be at least 6 characters' });
+        }
+
+        // Get user from database
+        const userResult = await pool.query(
+            'SELECT password_hash FROM users WHERE user_id = $1',
+            [userId]
+        );
+
+        if (userResult.rows.length === 0) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        // Verify current password
+        const validPassword = await bcrypt.compare(currentPassword, userResult.rows[0].password_hash);
+        if (!validPassword) {
+            return res.status(401).json({ error: 'Current password is incorrect' });
+        }
+
+        // Hash new password
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+        // Update password in database
+        await pool.query(
+            'UPDATE users SET password_hash = $1 WHERE user_id = $2',
+            [hashedPassword, userId]
+        );
+
+        res.json({ message: 'Password changed successfully' });
+    } catch (error) {
+        console.error('Error changing password:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
+// Change Username Endpoint
+app.post('/api/change-username', requireAuth, async (req, res) => {
+    try {
+        const { newUsername } = req.body;
+        const userId = req.session.userId;
+
+        // Validate inputs
+        if (!newUsername) {
+            return res.status(400).json({ error: 'New username is required' });
+        }
+
+        if (newUsername.length < 3) {
+            return res.status(400).json({ error: 'Username must be at least 3 characters' });
+        }
+
+        // Check if username already exists
+        const existingUser = await pool.query(
+            'SELECT user_id FROM users WHERE username = $1 AND user_id != $2',
+            [newUsername, userId]
+        );
+
+        if (existingUser.rows.length > 0) {
+            return res.status(409).json({ error: 'Username already taken' });
+        }
+
+        // Update username in database
+        await pool.query(
+            'UPDATE users SET username = $1 WHERE user_id = $2',
+            [newUsername, userId]
+        );
+
+        // Update session username
+        req.session.username = newUsername;
+
+        res.json({ message: 'Username changed successfully', username: newUsername });
+    } catch (error) {
+        console.error('Error changing username:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
 
 // Új futás hozzáadása API végpont
 app.post('/api/add-run', requireAuth, async (req, res) => {

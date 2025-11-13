@@ -857,3 +857,339 @@ button:disabled {
 .difficulty-badge.hard {
     background-color: #f5222d;
 }
+
+/* Settings Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    animation: fadeIn 0.3s ease;
+}
+
+.modal.active {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.modal-content {
+    background-color: #fff;
+    padding: 0;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid #f0f0f0;
+    background-color: #fafafa;
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 1.5em;
+    color: #1a1a1a;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 1.5em;
+    cursor: pointer;
+    color: #999;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.3s ease;
+}
+
+.modal-close:hover {
+    color: #1a1a1a;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.settings-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.settings-tab {
+    background: none;
+    border: none;
+    padding: 12px 20px;
+    cursor: pointer;
+    font-size: 1em;
+    color: #999;
+    border-bottom: 3px solid transparent;
+    transition: all 0.3s ease;
+    margin-bottom: -2px;
+}
+
+.settings-tab:hover {
+    color: #1890ff;
+}
+
+.settings-tab.active {
+    color: #1890ff;
+    border-bottom-color: #1890ff;
+}
+
+.settings-section {
+    display: none;
+    animation: slideIn 0.3s ease;
+}
+
+.settings-section.active {
+    display: block;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.settings-section h3 {
+    margin-top: 0;
+    color: #1a1a1a;
+    font-size: 1.1em;
+    margin-bottom: 15px;
+}
+
+.settings-section .form-group {
+    margin-bottom: 15px;
+}
+
+.settings-section label {
+    display: block;
+    margin-bottom: 8px;
+    color: #666;
+    font-weight: 500;
+    font-size: 0.95em;
+}
+
+.settings-section input[type="text"],
+.settings-section input[type="password"],
+.settings-section input[type="email"] {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    font-size: 1em;
+    transition: border-color 0.3s ease;
+}
+
+.settings-section input[type="text"]:focus,
+.settings-section input[type="password"]:focus,
+.settings-section input[type="email"]:focus {
+    border-color: #1890ff;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+}
+
+.settings-section input[readonly] {
+    background-color: #fafafa;
+    cursor: not-allowed;
+}
+
+/* Account Field Layout - Username and Password Display */
+.account-field {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background-color: #fafafa;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    border: 1px solid #e8e8e8;
+}
+
+.account-field .field-content {
+    flex: 1;
+}
+
+.account-field .field-content label {
+    display: block;
+    color: #666;
+    font-weight: 500;
+    font-size: 0.95em;
+    margin-bottom: 5px;
+}
+
+.masked-value {
+    font-size: 1em;
+    color: #1a1a1a;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 2px;
+}
+
+.small-btn {
+    background-color: #1890ff;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.9em;
+    transition: background-color 0.3s ease;
+    margin-left: 20px;
+    white-space: nowrap;
+}
+
+.small-btn:hover {
+    background-color: #0056b3;
+}
+
+.small-btn:disabled {
+    background-color: #d9d9d9;
+    cursor: not-allowed;
+}
+
+/* Change Form Styles */
+.change-form {
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-radius: 4px;
+    margin-top: 10px;
+    border-left: 4px solid #1890ff;
+}
+
+.change-form.hidden {
+    display: none;
+}
+
+.form-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.submit-button {
+    background-color: #52c41a;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+    flex: 1;
+}
+
+.submit-button:hover {
+    background-color: #389e0d;
+}
+
+.submit-button:disabled {
+    background-color: #d9d9d9;
+    cursor: not-allowed;
+}
+
+.cancel-button {
+    background-color: #d9d9d9;
+    color: #666;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+    flex: 1;
+}
+
+.cancel-button:hover {
+    background-color: #bfbf9f;
+}
+
+#changePasswordBtn {
+    background-color: #1890ff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+    margin-top: 10px;
+}
+
+#changePasswordBtn:hover {
+    background-color: #0056b3;
+}
+
+#changePasswordBtn:disabled {
+    background-color: #d9d9d9;
+    cursor: not-allowed;
+}
+
+.form-message {
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 4px;
+    display: none;
+}
+
+.form-message.success {
+    background-color: #f6ffed;
+    color: #52c41a;
+    border: 1px solid #b7eb8f;
+    display: block;
+}
+
+.form-message.error {
+    background-color: #fff1f0;
+    color: #f5222d;
+    border: 1px solid #ffccc7;
+    display: block;
+}
+
+.legal-content {
+    line-height: 1.8;
+    color: #666;
+}
+
+.legal-content h3 {
+    color: #1a1a1a;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+.legal-content p {
+    margin: 10px 0;
+    text-align: justify;
+}
