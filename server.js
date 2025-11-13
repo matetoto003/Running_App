@@ -369,7 +369,7 @@ app.get('/api/last-run', requireAuth, async (req, res) => {
 app.post('/api/add-run', requireAuth, async (req, res) => {
     try {
         const userId = req.session.userId;
-        const { distance, minutes, difficulty, calories, elevation, avg_heartRate } = req.body;
+        const { distance, minutes, difficulty, calories, elevation, avg_heartRate, runDate } = req.body;
 
         // Idő átalakítása
         const timeParts = minutes.split(':');
@@ -382,10 +382,17 @@ app.post('/api/add-run', requireAuth, async (req, res) => {
         const avgSpeedKmH = distanceInKm / durationInHours;
         const paceMinPerKm = durationInMinutes / distanceInKm;
 
+        // Parse date if provided, otherwise use current date
+        let createdAt = 'NOW()';
+        if (runDate) {
+            // Parse the date string (format: YYYY-MM-DD) and set to midnight of that day in local timezone
+            createdAt = `'${runDate}T00:00:00'`;
+        }
+
         const query = `
             INSERT INTO public.runs 
-            (user_id, distance_km, duration_min, pace_minpkm, avg_speed, calories, elevation_gained, difficulty, avg_heartrate)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+            (user_id, distance_km, duration_min, pace_minpkm, avg_speed, calories, elevation_gained, difficulty, avg_heartrate, created_at)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, ${createdAt})
             RETURNING *
         `;
         

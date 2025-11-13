@@ -252,7 +252,8 @@ if (document.getElementById('addNewRunForm')) {
             difficulty: document.getElementById('difficulty').value,
             avg_heartRate: document.getElementById('avg_heartRate').value,
             calories: document.getElementById('calories').value,
-            elevation: document.getElementById('elevation').value.replace('m', '') // Eltávolítjuk az 'm' betűt, ha van
+            elevation: document.getElementById('elevation').value.replace('m', ''), // Eltávolítjuk az 'm' betűt, ha van
+            runDate: document.getElementById('runDate') ? document.getElementById('runDate').value : null // Add date if available
         };
 
         const responseMessage = document.getElementById('responseMessage');
