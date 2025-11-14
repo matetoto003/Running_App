@@ -8,6 +8,34 @@ const cors = require('cors');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Level system definition
+const LEVELS = {
+    ROOKIE: { min: 0, max: 299, name: 'Rookie', color: '#007bff' },
+    BEGINNER: { min: 300, max: 499, name: 'Beginner', color: '#28a745' },
+    ADVANCED: { min: 500, max: 999, name: 'Advanced', color: '#ffc107' },
+    SEMI_PRO: { min: 1000, max: 1999, name: 'Semi Pro', color: '#fd7e14' },
+    PRO: { min: 2000, max: 4999, name: 'Pro', color: '#dc3545' },
+    ATHLETE: { min: 5000, max: 9999, name: 'Athlete', color: '#6f42c1' },
+    GOAT: { min: 10000, max: Infinity, name: 'GOAT', color: '#e91e63' }
+};
+
+// Get user level based on total km
+function getUserLevel(totalKm) {
+    const kmValue = parseFloat(totalKm) || 0;
+    for (const level of Object.values(LEVELS)) {
+        if (kmValue >= level.min && kmValue <= level.max) {
+            return {
+                level: level.name,
+                color: level.color,
+                minKm: level.min,
+                maxKm: level.max,
+                progressPercentage: level.max === Infinity ? 100 : Math.round(((kmValue - level.min) / (level.max - level.min + 1)) * 100)
+            };
+        }
+    }
+    return LEVELS.ROOKIE;
+}
+
 // Middleware beállítása
 app.use(cors({
     origin: 'http://localhost:3000',
@@ -341,7 +369,17 @@ app.get('/api/profile-stats', requireAuth, async (req, res) => {
         );
 
         console.log('Profile stats result:', result.rows[0]); // Debug log
-        res.json(result.rows[0]);
+        
+        // Calculate user level
+        const stats = result.rows[0];
+        const userLevel = getUserLevel(stats.totalDistance);
+        
+        res.json({
+            ...stats,
+            level: userLevel.level,
+            levelColor: userLevel.color,
+            levelProgress: userLevel.progressPercentage
+        });
     } catch (error) {
         console.error('Error fetching profile stats:', error);
         res.status(500).json({ error: 'Server error' });
@@ -393,6 +431,34 @@ app.get('/api/all-runs', requireAuth, async (req, res) => {
     } catch (error) {
         console.error('Hiba az összes futás lekérésekor:', error);
         res.status(500).json({ error: 'Szerver hiba' });
+    }
+});
+
+// Get user level and color
+app.get('/api/user-level', requireAuth, async (req, res) => {
+    try {
+        const result = await pool.query(
+            `SELECT 
+                COALESCE(ROUND(SUM(distance_km)::numeric, 1), 0) as "totalDistance"
+             FROM runs 
+             WHERE user_id = $1`,
+            [req.session.userId]
+        );
+
+        const totalDistance = result.rows[0]?.totalDistance || 0;
+        const userLevel = getUserLevel(totalDistance);
+        
+        res.json({
+            level: userLevel.level,
+            color: userLevel.color,
+            totalDistance: totalDistance,
+            minKm: userLevel.minKm,
+            maxKm: userLevel.maxKm,
+            progressPercentage: userLevel.progressPercentage
+        });
+    } catch (error) {
+        console.error('Error fetching user level:', error);
+        res.status(500).json({ error: 'Server error' });
     }
 });
 

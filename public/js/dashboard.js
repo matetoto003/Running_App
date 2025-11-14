@@ -196,8 +196,9 @@ function updateCharts(timeSeriesData, period) {
                         ctx.font = 'bold 13px system-ui, Arial, sans-serif';
                         ctx.textAlign = 'center';
                         ctx.textBaseline = 'bottom';
-                        // Use blue color to match the chart bars
-                        ctx.fillStyle = '#007bff';
+                        // Use level color to match the chart bars
+                        const levelColor = getComputedStyle(document.documentElement).getPropertyValue('--level-color').trim();
+                        ctx.fillStyle = levelColor;
                         ctx.fillText(text, x, y - 6);
                         ctx.restore();
                     }
@@ -212,8 +213,8 @@ function updateCharts(timeSeriesData, period) {
             datasets: [{
                 label: 'Distance (km)',
                 data: distances,
-                backgroundColor: distances.map(d => d > 0 ? 'rgba(24, 144, 255, 0.9)' : 'rgba(200,200,200,0.25)'),
-                borderColor: distances.map(d => d > 0 ? 'rgba(24, 144, 255, 1)' : 'rgba(200,200,200,0.5)'),
+                backgroundColor: distances.map(d => d > 0 ? getComputedStyle(document.documentElement).getPropertyValue('--level-color').trim() + 'e5' : 'rgba(200,200,200,0.25)'),
+                borderColor: distances.map(d => d > 0 ? getComputedStyle(document.documentElement).getPropertyValue('--level-color').trim() : 'rgba(200,200,200,0.5)'),
                 borderWidth: 1,
                 borderRadius: 4,
                 maxBarThickness: 40
@@ -478,3 +479,5 @@ document.addEventListener('DOMContentLoaded', () => {
     // Kezdeti adatok betöltése
     fetchAndDisplayStats(currentPeriod);
 });
+
+

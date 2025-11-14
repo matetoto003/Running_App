@@ -16,7 +16,7 @@
                 <ul class="nav-list">
                     <li><a href="index.html" class="nav-item">Home</a></li>
                     <li><a href="dashboards.html" class="nav-item">Dashboards</a></li>
-                    <li><a href="add-new-run.html" class="nav-item active">Add new run</a></li>
+                    <li><a href="add-new-run.html" class="nav-item active levelcolor">Add new run</a></li>
                     <li><a href="training-plan.html" class="nav-item">Training plan</a></li>
                     <li><a href="useful-informations.html" class="nav-item">Useful informations</a></li>
                 </ul>
@@ -97,7 +97,7 @@
                         <input type="text" id="elevation" name="elevation" placeholder="10m" required>
                     </div>
 
-                    <button type="submit" class="submit-button">Save Run</button>
+                    <button type="submit" class="submit-button levelcolor">Save Run</button>
                     <p class="form-message" id="responseMessage"></p>
                 </form>
             </section>
@@ -115,9 +115,9 @@
             <div class="modal-body">
                 <!-- Profile Tab -->
                 <div class="settings-tabs">
-                    <button class="settings-tab active" data-tab="profile">Profile</button>
-                    <button class="settings-tab" data-tab="theme">Theme</button>
-                    <button class="settings-tab" data-tab="legal">Legal</button>
+                    <button class="settings-tab levelcolor active" data-tab="profile">Profile</button>
+                    <button class="settings-tab levelcolor" data-tab="theme">Theme</button>
+                    <button class="settings-tab levelcolor" data-tab="legal">Legal</button>
                 </div>
 
                 <!-- Profile Section -->
@@ -130,7 +130,7 @@
                             <label>Username</label>
                             <div class="masked-value" id="usernameDisplay">*******</div>
                         </div>
-                        <button class="small-btn" id="changeUsernameBtn">Change Username</button>
+                        <button class="small-btn levelcolor" id="changeUsernameBtn">Change Username</button>
                     </div>
 
                     <!-- Password Field -->
@@ -139,7 +139,7 @@
                             <label>Password</label>
                             <div class="masked-value" id="passwordDisplay">*******</div>
                         </div>
-                        <button class="small-btn" id="changePasswordBtn">Change Password</button>
+                        <button class="small-btn levelcolor" id="changePasswordBtn">Change Password</button>
                     </div>
 
                     <!-- Change Username Form (Hidden) -->
@@ -149,7 +149,7 @@
                             <input type="text" id="newUsername" name="newUsername" placeholder="Enter new username">
                         </div>
                         <div class="form-actions">
-                            <button class="submit-button" id="confirmUsernameBtn">Confirm</button>
+                            <button class="submit-button levelcolor" id="confirmUsernameBtn">Confirm</button>
                             <button class="cancel-button" id="cancelUsernameBtn">Cancel</button>
                         </div>
                         <p class="form-message" id="usernameMessage"></p>
@@ -170,7 +170,7 @@
                             <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm new password">
                         </div>
                         <div class="form-actions">
-                            <button class="submit-button" id="confirmPasswordBtn">Confirm</button>
+                            <button class="submit-button levelcolor" id="confirmPasswordBtn">Confirm</button>
                             <button class="cancel-button" id="cancelPasswordBtn">Cancel</button>
                         </div>
                         <p class="form-message" id="passwordMessage"></p>
@@ -211,6 +211,7 @@
     <script src="js/client.js"></script>
     <script src="js/settings.js"></script>
     <script src="js/theme.js"></script>
+    <script src="js/user-level.js"></script>
     <script>
         // Set default date to today
         document.addEventListener('DOMContentLoaded', () => {
@@ -220,3 +221,5 @@
     </script>
     </body>
 </html>
+
+

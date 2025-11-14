@@ -15,7 +15,7 @@
             <nav class="main-nav">
                 <h3 class="nav-title">Discover</h3>
                 <ul class="nav-list">
-                    <li><a href="index.html" class="nav-item active">Home</a></li>
+                    <li><a href="index.html" class="nav-item active levelcolor">Home</a></li>
                     <li><a href="dashboards.html" class="nav-item">Dashboards</a></li>
                     <li><a href="add-new-run.html" class="nav-item">Add new run</a></li>
                     <li><a href="training-plan.html" class="nav-item">Training plan</a></li>
@@ -71,7 +71,7 @@
                     <div id="lastRunInfo">
                         <p>Loading your last run data...</p>
                     </div>
-                    <a href="dashboards.html">Go to Dashboards</a>
+                    <a href="dashboards.html" class="levelcolor">Go to Dashboards</a>
                 </article>
 
                 <article class="card all-runs-card" style="margin-top: 20px;">
@@ -113,9 +113,9 @@
             <div class="modal-body">
                 <!-- Profile Tab -->
                 <div class="settings-tabs">
-                    <button class="settings-tab active" data-tab="profile">Profile</button>
-                    <button class="settings-tab" data-tab="theme">Theme</button>
-                    <button class="settings-tab" data-tab="legal">Legal</button>
+                    <button class="settings-tab levelcolor active" data-tab="profile">Profile</button>
+                    <button class="settings-tab levelcolor" data-tab="theme">Theme</button>
+                    <button class="settings-tab levelcolor" data-tab="legal">Legal</button>
                 </div>
 
                 <!-- Profile Section -->
@@ -128,7 +128,7 @@
                             <label>Username</label>
                             <div class="masked-value" id="usernameDisplay">*******</div>
                         </div>
-                        <button class="small-btn" id="changeUsernameBtn">Change Username</button>
+                        <button class="small-btn levelcolor" id="changeUsernameBtn">Change Username</button>
                     </div>
 
                     <!-- Password Field -->
@@ -137,7 +137,7 @@
                             <label>Password</label>
                             <div class="masked-value" id="passwordDisplay">*******</div>
                         </div>
-                        <button class="small-btn" id="changePasswordBtn">Change Password</button>
+                        <button class="small-btn levelcolor" id="changePasswordBtn">Change Password</button>
                     </div>
 
                     <!-- Change Username Form (Hidden) -->
@@ -147,7 +147,7 @@
                             <input type="text" id="newUsername" name="newUsername" placeholder="Enter new username">
                         </div>
                         <div class="form-actions">
-                            <button class="submit-button" id="confirmUsernameBtn">Confirm</button>
+                            <button class="submit-button levelcolor" id="confirmUsernameBtn">Confirm</button>
                             <button class="cancel-button" id="cancelUsernameBtn">Cancel</button>
                         </div>
                         <p class="form-message" id="usernameMessage"></p>
@@ -168,7 +168,7 @@
                             <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm new password">
                         </div>
                         <div class="form-actions">
-                            <button class="submit-button" id="confirmPasswordBtn">Confirm</button>
+                            <button class="submit-button levelcolor" id="confirmPasswordBtn">Confirm</button>
                             <button class="cancel-button" id="cancelPasswordBtn">Cancel</button>
                         </div>
                         <p class="form-message" id="passwordMessage"></p>
@@ -207,8 +207,13 @@
     </div>
     
     <script src="js/theme.js"></script>
+    <script src="js/user-level.js"></script>
     <script src="js/client.js"></script>
     <script src="js/all-runs.js"></script>
     <script src="js/settings.js"></script>
 </body>
 </html>
+
+
+
+

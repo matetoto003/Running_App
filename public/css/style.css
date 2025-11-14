@@ -8,6 +8,7 @@
     --text-tertiary: #999999;
     --border-color: #d9d9d9;
     --primary-color: #1890ff;
+    --level-color: #1890ff;
     --accent-color: #52c41a;
     --danger-color: #f5222d;
     --warning-color: #faad14;
@@ -16,6 +17,11 @@
     --input-bg: #ffffff;
     --input-border: #d9d9d9;
     --input-focus-shadow: rgba(24, 144, 255, 0.2);
+}
+
+/* Level Color - applies to all elements with this class */
+.levelcolor {
+    background-color: var(--level-color);
 }
 
 body.dark-theme {
@@ -53,6 +59,15 @@ h1, h2, h3, h4, h5, h6 {
 a {
     text-decoration: none;
     color: var(--primary-color);
+}
+
+a.levelcolor:not(.help-icon) {
+    color: white;
+    background-color: var(--level-color);
+    padding: 10px 20px;
+    display: inline-block;
+    border-radius: 6px;
+    font-weight: 600;
 }
 
 /* === LOGIN AND REGISTRATION PAGES === */
@@ -194,6 +209,16 @@ a {
     font-weight: 600;
 }
 
+.nav-item.levelcolor.active {
+    background-color: color-mix(in srgb, var(--level-color) 10%, transparent) !important;
+    color: var(--level-color) !important;
+}
+
+.nav-item.levelcolor.active:hover {
+    background-color: color-mix(in srgb, var(--level-color) 20%, transparent) !important;
+    color: var(--level-color) !important;
+}
+
 .nav-item:hover:not(.active) {
     background-color: var(--hover-bg);
 }
@@ -310,6 +335,7 @@ a {
 
 .profile-menu .menu-item:hover {
     background-color: var(--hover-bg);
+    color: var(--level-color);
 }
 
 .profile-menu .menu-item.logout {
@@ -431,6 +457,10 @@ button.submit-button:hover {
     color: white;
 }
 
+.period-button.levelcolor.active {
+    background-color: var(--level-color);
+}
+
 .dashboard-grid-top, .dashboard-grid-bottom, .info-grid-top {
     display: grid;
     gap: 25px;
@@ -532,8 +562,16 @@ canvas {
     line-height: 1;
 }
 
+.card-plus-btn.levelcolor {
+    background-color: var(--level-color) !important;
+}
+
 .card-plus-btn:hover {
     background-color: #0056b3;
+}
+
+.card-plus-btn.levelcolor:hover {
+    opacity: 0.8;
 }
 
 .personal-best-card .stat-value {
@@ -567,25 +605,30 @@ canvas {
 }
 
 .help-icon {
+    background-color: var(--level-color);
+    color: white;
+    border: none;
     width: 20px;
     height: 20px;
     border-radius: 50%;
-    background-color: var(--primary-color);
-    color: white;
+    cursor: pointer;
+    font-size: 0.9em;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.8em;
-    font-weight: bold;
+    padding: 0;
+    transition: background-color 0.2s ease;
+    line-height: 1;
     text-decoration: none;
-    cursor: pointer;
-    transition: all 0.3s ease;
     flex-shrink: 0;
 }
 
+.help-icon.levelcolor {
+    background-color: var(--level-color) !important;
+}
+
 .help-icon:hover {
-    background-color: #0056b3;
-    transform: scale(1.1);
+    opacity: 0.8;
 }
 
 .stat-card .stat-value {
@@ -651,7 +694,7 @@ canvas {
 
 .progress-fill {
     height: 100%;
-    background: linear-gradient(90deg, #1890ff, #40a9ff);
+    background: linear-gradient(90deg, var(--level-color), var(--level-color));
     transition: width 0.3s ease;
     border-radius: 4px;
 }
@@ -675,8 +718,15 @@ canvas {
     margin-top: auto; /* A gombot a kártya aljára tolja */
     transition: background-color 0.2s;
 }
+.btn-start.levelcolor {
+    background-color: var(--level-color) !important;
+    color: white !important;
+}
 .btn-start:hover {
     background-color: #0056b3;
+}
+.btn-start.levelcolor:hover {
+    opacity: 0.8;
 }
 
 /* === 'USEFUL INFORMATIONS' OLDAL === */
@@ -826,11 +876,16 @@ button:disabled {
 
 .week-title {
     font-size: 1.3em;
-    color: var(--primary-color);
+    color: var(--level-color);
     margin: 20px 0 15px 0;
     padding-bottom: 10px;
-    border-bottom: 2px solid var(--primary-color);
+    border-bottom: 2px solid var(--level-color);
     font-weight: 600;
+}
+
+.week-title.levelcolor {
+    color: var(--level-color);
+    border-bottom-color: var(--level-color);
 }
 
 .week-group:first-child .week-title {
@@ -850,9 +905,13 @@ button:disabled {
     margin-bottom: 0;
     background-color: var(--bg-secondary);
     border-radius: 6px;
-    border-left: 4px solid var(--primary-color);
+    border-left: 4px solid var(--level-color);
     transition: all 0.3s ease;
     color: var(--text-primary);
+}
+
+.training-session.levelcolor {
+    border-left-color: var(--level-color);
 }
 
 .training-session:hover {
@@ -865,7 +924,7 @@ button:disabled {
     height: 20px;
     margin-right: 15px;
     cursor: pointer;
-    accent-color: var(--primary-color);
+    accent-color: var(--level-color);
 }
 
 .session-label {
@@ -909,7 +968,7 @@ button:disabled {
     font-size: 1.5em;
     cursor: pointer;
     padding: 0;
-    color: var(--primary-color);
+    color: var(--level-color);
     transition: transform 0.3s ease;
 }
 
@@ -1080,6 +1139,15 @@ button:disabled {
     border-bottom-color: var(--primary-color);
 }
 
+.settings-tab.levelcolor {
+    color: var(--level-color);
+}
+
+.settings-tab.levelcolor.active {
+    color: var(--level-color);
+    border-bottom-color: var(--level-color);
+}
+
 .settings-section {
     display: none;
     animation: slideIn 0.3s ease;
@@ -1190,8 +1258,16 @@ button:disabled {
     white-space: nowrap;
 }
 
+.small-btn.levelcolor {
+    background-color: var(--level-color) !important;
+}
+
 .small-btn:hover {
     background-color: #0056b3;
+}
+
+.small-btn.levelcolor:hover {
+    opacity: 0.8;
 }
 
 .small-btn:disabled {
@@ -1231,8 +1307,16 @@ button:disabled {
     flex: 1;
 }
 
+.submit-button.levelcolor {
+    background-color: var(--level-color) !important;
+}
+
 .submit-button:hover {
     background-color: #389e0d;
+}
+
+.submit-button.levelcolor:hover {
+    opacity: 0.8;
 }
 
 .submit-button:disabled {
@@ -1392,7 +1476,7 @@ button:disabled {
 }
 
 .theme-setting-toggle:checked ~ .theme-toggle-slider {
-    background-color: var(--primary-color);
+    background-color: var(--level-color);
 }
 
 .theme-setting-toggle:checked ~ .theme-toggle-slider::after {
@@ -1487,9 +1571,13 @@ button:disabled {
     color: var(--text-secondary);
 }
 
-.nav-item:hover,
-.nav-item.active {
+.nav-item.active:not(.levelcolor) {
     color: var(--primary-color);
+}
+
+.nav-item.levelcolor:hover,
+.nav-item.levelcolor.active {
+    color: var(--level-color);
 }
 
 .topbar {
