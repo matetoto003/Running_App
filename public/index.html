@@ -66,13 +66,33 @@
                     <p>Use the navigation on the left to add a new run, check your dashboards, or select a training plan.</p>
                 </div>
                 
-                <article class="card" style="margin-top: 20px;">
-                    <h3>Quick Overview</h3>
-                    <div id="lastRunInfo">
-                        <p>Loading your last run data...</p>
-                    </div>
-                    <a href="dashboards.html" class="levelcolor">Go to Dashboards</a>
-                </article>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;">
+                    <article class="card">
+                        <h3>Quick Overview</h3>
+                        <div id="lastRunInfo">
+                            <p>Loading your last run data...</p>
+                        </div>
+                        <a href="dashboards.html" class="levelcolor">Go to Dashboards</a>
+                    </article>
+
+                    <article class="card">
+                        <h3>Your Running Level</h3>
+                        <div id="levelInfo" style="text-align: center;">
+                            <div style="font-size: 1.8em; font-weight: 700; margin: 15px 0; color: var(--level-color);" id="levelName">Loading...</div>
+                            <div style="margin-bottom: 12px;">
+                                <p style="margin: 3px 0; color: var(--text-secondary); font-size: 0.9em;">Total Distance</p>
+                                <p style="font-size: 1.4em; font-weight: 600; margin: 0;" id="totalDistance">0 km</p>
+                            </div>
+                            <div style="margin-bottom: 12px;">
+                                <p style="margin: 3px 0; color: var(--text-secondary); font-size: 0.9em;" id="progressLabel">Progress</p>
+                                <div style="background-color: var(--bg-tertiary); height: 6px; border-radius: 4px; overflow: hidden; margin-top: 3px;">
+                                    <div style="height: 100%; background-color: var(--level-color); width: 50%;" id="progressBar"></div>
+                                </div>
+                                <p style="font-size: 0.8em; color: var(--text-secondary); margin-top: 3px;" id="progressText">Loading...</p>
+                            </div>
+                        </div>
+                    </article>
+                </div>
 
                 <article class="card all-runs-card" style="margin-top: 20px;">
                     <div class="all-runs-header">
@@ -114,6 +134,7 @@
                 <!-- Profile Tab -->
                 <div class="settings-tabs">
                     <button class="settings-tab levelcolor active" data-tab="profile">Profile</button>
+                    <button class="settings-tab levelcolor" data-tab="levels">Levels</button>
                     <button class="settings-tab levelcolor" data-tab="theme">Theme</button>
                     <button class="settings-tab levelcolor" data-tab="legal">Legal</button>
                 </div>
@@ -188,6 +209,15 @@
                     </div>
                 </div>
 
+                <!-- Levels Section -->
+                <div id="levels" class="settings-section">
+                    <h3>Running Levels</h3>
+                    <p style="color: var(--text-secondary); margin-bottom: 30px;">Unlock new levels as you run more kilometers</p>
+                    <div id="levelsPyramid" style="display: flex; flex-direction: column; align-items: center; gap: 25px;">
+                        <!-- Levels will be populated by JavaScript -->
+                    </div>
+                </div>
+
                 <!-- Legal Section -->
                 <div id="legal" class="settings-section">
                     <div class="legal-content">
@@ -211,6 +241,79 @@
     <script src="js/client.js"></script>
     <script src="js/all-runs.js"></script>
     <script src="js/settings.js"></script>
+    
+    <script>
+        // Populate levels pyramid in settings
+        function populateLevelsTable() {
+            const levels = [
+                { name: 'Rookie', min: 0, max: 299, color: '#007bff' },
+                { name: 'Beginner', min: 300, max: 499, color: '#28a745' },
+                { name: 'Advanced', min: 500, max: 999, color: '#ffc107' },
+                { name: 'Semi Pro', min: 1000, max: 1999, color: '#fd7e14' },
+                { name: 'Pro', min: 2000, max: 4999, color: '#dc3545' },
+                { name: 'Athlete', min: 5000, max: 9999, color: '#6f42c1' },
+                { name: 'GOAT', min: 10000, max: null, color: '#e91e63' }
+            ];
+            
+            const pyramid = document.getElementById('levelsPyramid');
+            pyramid.innerHTML = '';
+            
+            levels.forEach((level, index) => {
+                const levelRow = document.createElement('div');
+                levelRow.style.cssText = 'display: flex; align-items: center; gap: 15px; width: 100%;';
+                
+                // Color circle
+                const colorCircle = document.createElement('div');
+                colorCircle.style.cssText = `width: 24px; height: 24px; border-radius: 50%; background-color: ${level.color}; flex-shrink: 0;`;
+                
+                // Level name and range
+                const info = document.createElement('div');
+                const range = level.max === null ? `${level.min}+ km` : `${level.min} - ${level.max} km`;
+                info.innerHTML = `<strong style="font-size: 1.1em;">${level.name}</strong><br><span style="color: var(--text-secondary); font-size: 0.9em;">${range}</span>`;
+                
+                levelRow.appendChild(colorCircle);
+                levelRow.appendChild(info);
+                pyramid.appendChild(levelRow);
+            });
+        }
+        
+        // Populate running level card
+        async function loadLevelCard() {
+            try {
+                const response = await fetch('/api/user-level', {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                
+                if (response.ok) {
+                    document.getElementById('levelName').textContent = data.level.charAt(0).toUpperCase() + data.level.slice(1);
+                    document.getElementById('totalDistance').textContent = data.totalDistance + ' km';
+                    document.getElementById('progressBar').style.width = data.progressPercentage + '%';
+                    
+                    // Calculate km remaining to next level
+                    let kmRemaining;
+                    if (data.maxKm === Infinity) {
+                        kmRemaining = 'N/A';
+                    } else {
+                        kmRemaining = Math.max(0, data.maxKm - data.totalDistance + 1);
+                    }
+                    document.getElementById('progressText').textContent = kmRemaining + ' km to next level';
+                    
+                    // Update the color dynamically
+                    document.getElementById('levelName').style.color = data.color;
+                    document.getElementById('progressBar').style.backgroundColor = data.color;
+                }
+            } catch (error) {
+                console.error('Error loading level card:', error);
+            }
+        }
+        
+        // Load on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadLevelCard();
+            populateLevelsTable();
+        });
+    </script>
 </body>
 </html>
 
