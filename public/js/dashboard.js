@@ -179,36 +179,32 @@ function updateCharts(timeSeriesData, period) {
     const labels = timeSeriesData.map(item => item.label.trim());
     const distances = timeSeriesData.map(item => parseFloat(item.distance) || 0);
 
-    // Plugin a címkékhez
-    const dataLabelPlugin = {
-        id: 'datalabelsOnBars',
-        afterDatasetsDraw(chart) {
-            const { ctx } = chart;
-            chart.data.datasets.forEach((dataset, dsIndex) => {
-                const meta = chart.getDatasetMeta(dsIndex);
-                meta.data.forEach((bar, index) => {
-                    const value = dataset.data[index];
-                    if (value && value > 0) {
-                        const x = bar.x;
-                        const y = bar.y;
-                        const text = `${value.toFixed(1)} km`;
-                        ctx.save();
-                        ctx.font = '12px system-ui, Arial, sans-serif';
-                        ctx.textAlign = 'center';
-                        ctx.textBaseline = 'bottom';
-                        ctx.lineWidth = 3;
-                        ctx.strokeStyle = 'rgba(255,255,255,0.9)';
-                        ctx.strokeText(text, x, y - 6);
-                        ctx.fillStyle = 'rgba(0,0,0,0.85)';
-                        ctx.fillText(text, x, y - 6);
-                        ctx.restore();
-                    }
-                });
-            });
-        }
-    };
-
-    // JAVÍTÁS: A config és a new Chart visszakerült a függvénybe
+    // Plugin a címkékhez
+    const dataLabelPlugin = {
+        id: 'datalabelsOnBars',
+        afterDatasetsDraw(chart) {
+            const { ctx } = chart;
+            chart.data.datasets.forEach((dataset, dsIndex) => {
+                const meta = chart.getDatasetMeta(dsIndex);
+                meta.data.forEach((bar, index) => {
+                    const value = dataset.data[index];
+                    if (value && value > 0) {
+                        const x = bar.x;
+                        const y = bar.y;
+                        const text = `${value.toFixed(1)} km`;
+                        ctx.save();
+                        ctx.font = 'bold 13px system-ui, Arial, sans-serif';
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'bottom';
+                        // Use blue color to match the chart bars
+                        ctx.fillStyle = '#007bff';
+                        ctx.fillText(text, x, y - 6);
+                        ctx.restore();
+                    }
+                });
+            });
+        }
+    };    // JAVÍTÁS: A config és a new Chart visszakerült a függvénybe
     const config = {
         type: 'bar',
         data: {
