@@ -27,7 +27,8 @@ async function fetchAndDisplayStats(period) {
             console.log('Difficulty data:', data.difficulty); // Log a kördiagram adataihoz
             updateStatCards(data.stats);
             updateCharts(data.timeSeries || [], period);
-            updateDifficultyChart(data.difficulty || []); // Hívás a kördiagram frissítésére
+            updateDifficultyChart(data.difficulty || []); // H�v�s a k�rdiagram friss�t�s�re
+            updatePersonalBest(data.stats);
             document.getElementById('periodTitle').textContent = periodTitles[period];
         } else {
             console.error('Hiba a statisztikák lekérésekor:', data.error);
@@ -113,6 +114,57 @@ function updateStatCards(stats) {
     totalRunsElements.forEach(element => {
         element.textContent = totalRunsProfileValue.toString();
     });
+}
+
+// Update Personal Best Section
+function updatePersonalBest(stats) {
+    const longestDistance = parseFloat(stats.longest_distance || 0);
+    const longestDistanceEl = document.getElementById('longestDistance');
+    if (longestDistanceEl) {
+        longestDistanceEl.textContent = longestDistance > 0 ? `${longestDistance.toFixed(2)} km` : '0 km';
+        const dateEl = document.getElementById('longestDistanceDate');
+        if (dateEl) dateEl.textContent = stats.longest_distance_date ? new Date(stats.longest_distance_date).toLocaleDateString('en-US') : 'No runs yet';
+    }
+
+    const longestTime = parseInt(stats.longest_duration || 0);
+    const longestTimeEl = document.getElementById('longestTime');
+    if (longestTimeEl) {
+        const hours = Math.floor(longestTime / 60);
+        const minutes = longestTime % 60;
+        longestTimeEl.textContent = longestTime > 0 ? `${hours}h ${minutes}m` : '0h 00m';
+        const dateEl = document.getElementById('longestTimeDate');
+        if (dateEl) dateEl.textContent = stats.longest_duration_date ? new Date(stats.longest_duration_date).toLocaleDateString('en-US') : 'No runs yet';
+    }
+
+    const fastestPace = parseFloat(stats.fastest_pace || 0);
+    const fastestPaceEl = document.getElementById('fastestPace');
+    if (fastestPaceEl) {
+        if (fastestPace > 0) {
+            const minutes = Math.floor(fastestPace);
+            const seconds = Math.round((fastestPace - minutes) * 60);
+            fastestPaceEl.textContent = `${minutes}:${seconds.toString().padStart(2, '0')} min/km`;
+        } else {
+            fastestPaceEl.textContent = '0:00 min/km';
+        }
+        const dateEl = document.getElementById('fastestPaceDate');
+        if (dateEl) dateEl.textContent = stats.fastest_pace_date ? new Date(stats.fastest_pace_date).toLocaleDateString('en-US') : 'No runs yet';
+    }
+
+    const mostCalories = parseInt(stats.max_calories || 0);
+    const mostCaloriesEl = document.getElementById('mostCalories');
+    if (mostCaloriesEl) {
+        mostCaloriesEl.textContent = mostCalories > 0 ? `${mostCalories} kcal` : '0 kcal';
+        const dateEl = document.getElementById('mostCaloriesDate');
+        if (dateEl) dateEl.textContent = stats.max_calories_date ? new Date(stats.max_calories_date).toLocaleDateString('en-US') : 'No runs yet';
+    }
+
+    const biggestClimb = parseInt(stats.max_elevation || 0);
+    const biggestClimbEl = document.getElementById('biggestClimb');
+    if (biggestClimbEl) {
+        biggestClimbEl.textContent = biggestClimb > 0 ? `${biggestClimb} m` : '0 m';
+        const dateEl = document.getElementById('biggestClimbDate');
+        if (dateEl) dateEl.textContent = stats.max_elevation_date ? new Date(stats.max_elevation_date).toLocaleDateString('en-US') : 'No runs yet';
+    }
 }
 
 // Oszlopdiagram (Bar Chart) frissítése
@@ -286,19 +338,147 @@ return `${label}: ${value} runs`;
 }
 
 
+// Modal Functions
+function openRunDetailsModal(metric, dateStr) {
+    const modal = document.getElementById('runDetailsModal');
+    if (!modal) {
+        console.error('Run details modal not found');
+        return;
+    }
+    
+    // Fetch runs from the specific date
+    fetchRunDetailsForDate(dateStr, metric);
+    
+    modal.classList.add('show');
+}
+
+function closeRunDetailsModal() {
+    const modal = document.getElementById('runDetailsModal');
+    if (modal) {
+        modal.classList.remove('show');
+    }
+}
+
+async function fetchRunDetailsForDate(dateStr, metric) {
+    try {
+        console.log('Fetching runs for date:', dateStr, 'metric:', metric);
+        const response = await fetch(`/api/runs?date=${dateStr}&t=${Date.now()}`, {
+            credentials: 'include'
+        });
+        const data = await response.json();
+        
+        console.log('Response data:', data);
+        if (response.ok && data.runs && data.runs.length > 0) {
+            // Find the run that matches the metric
+            const run = findRunByMetric(data.runs, metric);
+            if (run) {
+                populateRunDetails(run);
+            } else {
+                console.warn('No run found matching metric:', metric);
+            }
+        } else {
+            console.warn('No runs found for date:', dateStr);
+        }
+    } catch (error) {
+        console.error('Error fetching run details:', error);
+    }
+}
+
+function findRunByMetric(runs, metric) {
+    // Return the first run from the date (or could match by specific metric in future)
+    if (runs.length > 0) {
+        return runs[0];
+    }
+    return null;
+}
+
+function populateRunDetails(run) {
+    // Populate modal with run details
+    const detailDate = document.getElementById('detailDate');
+    const detailDistance = document.getElementById('detailDistance');
+    const detailDuration = document.getElementById('detailDuration');
+    const detailPace = document.getElementById('detailPace');
+    const detailDifficulty = document.getElementById('detailDifficulty');
+    const detailHeartRate = document.getElementById('detailHeartRate');
+    const detailCalories = document.getElementById('detailCalories');
+    const detailElevation = document.getElementById('detailElevation');
+    
+    if (detailDate) detailDate.textContent = new Date(run.date).toLocaleDateString('en-US');
+    if (detailDistance) detailDistance.textContent = `${parseFloat(run.distance).toFixed(2)} km`;
+    
+    if (detailDuration) {
+        const minutes = parseInt(run.duration || 0);
+        const hours = Math.floor(minutes / 60);
+        const mins = minutes % 60;
+        detailDuration.textContent = `${hours}h ${mins}m`;
+    }
+    
+    if (detailPace) {
+        const pace = parseFloat(run.pace || 0);
+        const minutes = Math.floor(pace);
+        const seconds = Math.round((pace - minutes) * 60);
+        detailPace.textContent = `${minutes}:${seconds.toString().padStart(2, '0')} min/km`;
+    }
+    
+    if (detailDifficulty) detailDifficulty.textContent = run.difficulty || 'N/A';
+    if (detailHeartRate) detailHeartRate.textContent = run.avg_heart_rate ? `${run.avg_heart_rate} bpm` : 'N/A';
+    if (detailCalories) detailCalories.textContent = run.calories ? `${run.calories} kcal` : 'N/A';
+    if (detailElevation) detailElevation.textContent = run.elevation ? `${run.elevation} m` : 'N/A';
+}
+
 // Időszak választó gombok kezelése
 document.addEventListener('DOMContentLoaded', () => {
-    const periodButtons = document.querySelectorAll('.period-button');
-    
-    periodButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            periodButtons.forEach(btn => btn.classList.remove('active'));
-            button.classList.add('active');
-            currentPeriod = button.dataset.period;
-            fetchAndDisplayStats(currentPeriod);
-        });
-    });
+    const periodButtons = document.querySelectorAll('.period-button');
+    
+    periodButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            periodButtons.forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+            currentPeriod = button.dataset.period;
+            fetchAndDisplayStats(currentPeriod);
+        });
+    });
+    
+    // Setup personal best card plus button listeners
+    const plusButtons = document.querySelectorAll('.card-plus-btn');
+    plusButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const metric = button.dataset.pb;
+            let date = null;
+            
+            // Get the date from the corresponding date element
+            const card = button.closest('.personal-best-card');
+            if (card) {
+                const dateElement = card.querySelector('small');
+                if (dateElement && dateElement.textContent !== 'No runs yet') {
+                    const dateStr = dateElement.textContent; // Format: "MM/DD/YYYY"
+                    const [month, day, year] = dateStr.split('/');
+                    const formattedDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`; // Convert to "YYYY-MM-DD"
+                    openRunDetailsModal(metric, formattedDate);
+                }
+            }
+        });
+    });
+    
+    // Modal close button
+    const closeBtn = document.getElementById('closeRunDetails');
+    if (closeBtn) {
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeRunDetailsModal();
+        });
+    }
+    
+    // Close modal when clicking outside
+    const modal = document.getElementById('runDetailsModal');
+    if (modal) {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeRunDetailsModal();
+            }
+        });
+    }
 
-    // Kezdeti adatok betöltése
-    fetchAndDisplayStats(currentPeriod);
+    // Kezdeti adatok betöltése
+    fetchAndDisplayStats(currentPeriod);
 });

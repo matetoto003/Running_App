@@ -208,7 +208,17 @@ app.get('/api/dashboard-stats', requireAuth, async (req, res) => {
                     WHEN COALESCE(SUM(distance_km), 0) > 0 
                     THEN COALESCE(ROUND(SUM(duration_min) / SUM(distance_km), 2), 0)
                     ELSE 0
-                END as avg_pace
+                END as avg_pace,
+                (SELECT distance_km FROM runs WHERE user_id = $1 AND ${dateFilter} ORDER BY distance_km DESC, created_at DESC LIMIT 1) as longest_distance,
+                (SELECT created_at FROM runs WHERE user_id = $1 AND ${dateFilter} ORDER BY distance_km DESC, created_at DESC LIMIT 1) as longest_distance_date,
+                (SELECT duration_min FROM runs WHERE user_id = $1 AND ${dateFilter} ORDER BY duration_min DESC, created_at DESC LIMIT 1) as longest_duration,
+                (SELECT created_at FROM runs WHERE user_id = $1 AND ${dateFilter} ORDER BY duration_min DESC, created_at DESC LIMIT 1) as longest_duration_date,
+                (SELECT pace_minpkm FROM runs WHERE user_id = $1 AND ${dateFilter} ORDER BY pace_minpkm ASC, created_at DESC LIMIT 1) as fastest_pace,
+                (SELECT created_at FROM runs WHERE user_id = $1 AND ${dateFilter} ORDER BY pace_minpkm ASC, created_at DESC LIMIT 1) as fastest_pace_date,
+                (SELECT calories FROM runs WHERE user_id = $1 AND ${dateFilter} ORDER BY calories DESC, created_at DESC LIMIT 1) as max_calories,
+                (SELECT created_at FROM runs WHERE user_id = $1 AND ${dateFilter} ORDER BY calories DESC, created_at DESC LIMIT 1) as max_calories_date,
+                (SELECT elevation_gained FROM runs WHERE user_id = $1 AND ${dateFilter} ORDER BY elevation_gained DESC, created_at DESC LIMIT 1) as max_elevation,
+                (SELECT created_at FROM runs WHERE user_id = $1 AND ${dateFilter} ORDER BY elevation_gained DESC, created_at DESC LIMIT 1) as max_elevation_date
             FROM runs 
             WHERE user_id = $1 AND ${dateFilter}
         `;
@@ -382,6 +392,39 @@ app.get('/api/all-runs', requireAuth, async (req, res) => {
         res.json(result.rows);
     } catch (error) {
         console.error('Hiba az összes futás lekérésekor:', error);
+        res.status(500).json({ error: 'Szerver hiba' });
+    }
+});
+
+// Get runs by date
+app.get('/api/runs', requireAuth, async (req, res) => {
+    try {
+        const { date } = req.query;
+        
+        if (!date) {
+            return res.status(400).json({ error: 'Date parameter is required' });
+        }
+        
+        const result = await pool.query(
+            `SELECT 
+                distance_km as distance,
+                duration_min as duration,
+                pace_minpkm as pace,
+                difficulty,
+                avg_heartRate as avg_heart_rate,
+                calories,
+                elevation_gained as elevation,
+                TO_CHAR(created_at, 'YYYY-MM-DD HH24:MI:SS') as date
+             FROM runs 
+             WHERE user_id = $1 
+             AND DATE(created_at) = $2::DATE
+             ORDER BY created_at DESC`,
+            [req.session.userId, date]
+        );
+
+        res.json({ runs: result.rows });
+    } catch (error) {
+        console.error('Hiba a futások lekérésekor:', error);
         res.status(500).json({ error: 'Szerver hiba' });
     }
 });
