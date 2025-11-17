@@ -417,9 +417,11 @@ app.get('/api/all-runs', requireAuth, async (req, res) => {
     try {
         const result = await pool.query(
             `SELECT 
+                CONCAT(created_at, '|', user_id) as id,
                 distance_km, 
                 duration_min, 
                 difficulty,
+                created_at,
                 TO_CHAR(created_at, 'YYYY-MM-DD') as run_date
              FROM runs 
              WHERE user_id = $1 
@@ -636,6 +638,98 @@ app.post('/api/add-run', requireAuth, async (req, res) => {
         console.error('Hiba a futás mentésekor:', error);
         res.status(500).json({ 
             error: 'Szerver hiba történt a mentés során',
+            details: error.message 
+        });
+    }
+});
+
+// Update run endpoint
+app.put('/api/update-run/:runId', requireAuth, async (req, res) => {
+    try {
+        const { runId } = req.params;
+        const { run_date, distance_km, duration_min, difficulty } = req.body;
+        
+        // Parse the composite ID (created_at|user_id)
+        const [createdAtStr, userIdFromId] = runId.split('|');
+        
+        // Verify ownership
+        if (parseInt(userIdFromId) !== req.session.userId) {
+            return res.status(403).json({ error: 'Unauthorized' });
+        }
+        
+        // Calculate pace
+        const paceMinPerKm = distance_km > 0 ? duration_min / distance_km : 0;
+        const durationInHours = duration_min / 60;
+        const avgSpeedKmH = distance_km / durationInHours;
+        
+        const query = `
+            UPDATE runs 
+            SET distance_km = $1,
+                duration_min = $2,
+                pace_minpkm = $3,
+                avg_speed = $4,
+                difficulty = $5,
+                created_at = $6
+            WHERE created_at = $7 AND user_id = $8
+            RETURNING *
+        `;
+        
+        const result = await pool.query(query, [
+            distance_km,
+            duration_min,
+            paceMinPerKm.toFixed(2),
+            avgSpeedKmH.toFixed(2),
+            difficulty,
+            run_date + 'T00:00:00',
+            createdAtStr,
+            req.session.userId
+        ]);
+        
+        if (result.rows.length === 0) {
+            return res.status(500).json({ error: 'Failed to update run' });
+        }
+        
+        res.json({ 
+            message: 'Run updated successfully',
+            run: result.rows[0]
+        });
+    } catch (error) {
+        console.error('Error updating run:', error);
+        res.status(500).json({ 
+            error: 'Server error updating run',
+            details: error.message 
+        });
+    }
+});
+
+// Delete run endpoint
+app.delete('/api/delete-run/:runId', requireAuth, async (req, res) => {
+    try {
+        const { runId } = req.params;
+        
+        // Parse the composite ID (created_at|user_id)
+        const [createdAtStr, userIdFromId] = runId.split('|');
+        
+        // Verify ownership
+        if (parseInt(userIdFromId) !== req.session.userId) {
+            return res.status(403).json({ error: 'Unauthorized' });
+        }
+        
+        // Delete the run
+        const result = await pool.query(
+            'DELETE FROM runs WHERE created_at = $1 AND user_id = $2',
+            [createdAtStr, req.session.userId]
+        );
+        
+        if (result.rowCount === 0) {
+            return res.status(404).json({ error: 'Run not found' });
+        }
+        
+        res.json({ message: 'Run deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting run:', error);
+        res.status(500).json({ 
+            error: 'Server error deleting run',
             details: error.message 
         });
     }
