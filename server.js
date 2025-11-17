@@ -194,24 +194,54 @@ app.get('/api/user', requireAuth, async (req, res) => {
 // Get dashboard statistics
 app.get('/api/dashboard-stats', requireAuth, async (req, res) => {
     try {
-        const { period, startDate, endDate } = req.query;
+        const { period, date } = req.query;
+        
+        // Parse the date parameter if provided, otherwise use today
+        let targetDate = new Date();
+        if (date) {
+            targetDate = new Date(date + 'T00:00:00Z');
+        }
+        
+        const dateStr = targetDate.toISOString().split('T')[0]; // YYYY-MM-DD
         let dateFilter;
         
         switch(period) {
             case 'week':
-                // Get the start of the current week (Monday)
-                dateFilter = "created_at >= date_trunc('week', NOW()) AND created_at < date_trunc('week', NOW() + INTERVAL '1 week')";
+                // ISO week: week starts on Monday (day 1 of ISO week)
+                // getDay(): 0=Sunday, 1=Monday, ..., 6=Saturday
+                // We want the Monday of the week containing targetDate
+                const ms = targetDate.getTime();
+                const msPerDay = 86400000;
+                const dayOfWeek = targetDate.getDay();
+                // Calculate milliseconds to previous Monday
+                const mondayMs = ms - ((dayOfWeek + 6) % 7) * msPerDay;
+                const mondayDate = new Date(mondayMs);
+                
+                const weekStartStr = mondayDate.toISOString().split('T')[0];
+                const sundayDate = new Date(mondayMs + 6 * msPerDay);
+                const weekEndStr = sundayDate.toISOString().split('T')[0];
+                
+                // For dateFilter, we need Monday to next Monday (exclusive)
+                const nextMondayDate = new Date(mondayMs + 7 * msPerDay);
+                const nextMondayStr = nextMondayDate.toISOString().split('T')[0];
+                
+                dateFilter = `created_at >= '${weekStartStr}'::date AND created_at < '${nextMondayStr}'::date`;
+                console.log('Week - Start (Monday):', weekStartStr, 'End (Sunday):', weekEndStr, 'NextMonday:', nextMondayStr);
                 break;
             case 'month':
-                // Get the start of the current month
-                dateFilter = "created_at >= date_trunc('month', NOW()) AND created_at < date_trunc('month', NOW() + INTERVAL '1 month')";
+                // Get the start and end of the month for the target date
+                const startOfMonth = new Date(targetDate.getFullYear(), targetDate.getMonth(), 1);
+                const endOfMonth = new Date(targetDate.getFullYear(), targetDate.getMonth() + 1, 1);
+                dateFilter = `created_at >= '${startOfMonth.toISOString().split('T')[0]}'::date AND created_at < '${endOfMonth.toISOString().split('T')[0]}'::date`;
                 break;
             case 'year':
-                // Get the start of the current year
-                dateFilter = "created_at >= date_trunc('year', NOW()) AND created_at < date_trunc('year', NOW() + INTERVAL '1 year')";
+                // Get the start and end of the year for the target date
+                const startOfYear = new Date(targetDate.getFullYear(), 0, 1);
+                const endOfYear = new Date(targetDate.getFullYear() + 1, 0, 1);
+                dateFilter = `created_at >= '${startOfYear.toISOString().split('T')[0]}'::date AND created_at < '${endOfYear.toISOString().split('T')[0]}'::date`;
                 break;
         }
-        console.log('Period:', period);
+        console.log('Period:', period, 'Date:', dateStr);
         console.log('Date filter:', dateFilter);
 
         // Get aggregated statistics
@@ -254,37 +284,60 @@ app.get('/api/dashboard-stats', requireAuth, async (req, res) => {
         // Időszak specifikus lekérdezés a grafikonhoz
         let timeSeriesQuery;
         if (period === 'year') {
+            const year = targetDate.getFullYear();
+            const yearStartStr = `${year}-01-01`;
+            const yearEndStr = `${year}-12-31`;
             timeSeriesQuery = `
                 SELECT 
                     dt::date as date,
-                    TO_CHAR(dt, 'Month') as label,
+                    TRIM(TO_CHAR(dt, 'Month')) as label,
                     COALESCE(SUM(r.distance_km), 0) as distance,
                     COUNT(r.*) as runs
                 FROM (
                     SELECT generate_series(
-                        date_trunc('year', CURRENT_DATE),
-                        date_trunc('year', CURRENT_DATE) + interval '11 months',
+                        '${yearStartStr}'::date,
+                        '${yearEndStr}'::date,
                         interval '1 month'
                     ) as dt
                 ) dates
                 LEFT JOIN runs r ON 
-                    DATE_TRUNC('month', r.created_at) = dates.dt AND
+                    DATE_TRUNC('month', r.created_at)::date = dates.dt AND
                     r.user_id = $1
-                GROUP BY dt, label
+                GROUP BY dt
                 ORDER BY dt
             `;
+            console.log('Year query - Start:', yearStartStr, 'End:', yearEndStr);
         } else if (period === 'week') {
+            // Same calculation as dateFilter
+            const ms = targetDate.getTime();
+            const msPerDay = 86400000;
+            const dayOfWeek = targetDate.getDay();
+            const mondayMs = ms - ((dayOfWeek + 6) % 7) * msPerDay;
+            const mondayDate = new Date(mondayMs);
+            
+            // Use local date formatting to avoid timezone issues
+            const year = mondayDate.getFullYear();
+            const month = String(mondayDate.getMonth() + 1).padStart(2, '0');
+            const day = String(mondayDate.getDate()).padStart(2, '0');
+            const weekStartStr = `${year}-${month}-${day}`;
+            
+            const sundayDate = new Date(mondayMs + 6 * msPerDay);
+            const sunYear = sundayDate.getFullYear();
+            const sunMonth = String(sundayDate.getMonth() + 1).padStart(2, '0');
+            const sunDay = String(sundayDate.getDate()).padStart(2, '0');
+            const weekEndStr = `${sunYear}-${sunMonth}-${sunDay}`;
+            
             timeSeriesQuery = `
                 WITH week_dates AS (
                     SELECT generate_series(
-                        date_trunc('week', NOW()),
-                        date_trunc('week', NOW()) + INTERVAL '6 days',
+                        '${weekStartStr}'::date,
+                        '${weekEndStr}'::date,
                         INTERVAL '1 day'
                     ) AS date
                 )
                 SELECT 
                     wd.date::date as date,
-                    TO_CHAR(wd.date, 'Day') as label,
+                    TRIM(TO_CHAR(wd.date, 'Day')) as label,
                     COALESCE(ROUND(SUM(r.distance_km)::numeric, 1), 0) as distance,
                     COUNT(r.*) as runs,
                     ROUND(AVG(r.calories)::numeric, 0) as avg_calories,
@@ -294,12 +347,22 @@ app.get('/api/dashboard-stats', requireAuth, async (req, res) => {
                 GROUP BY wd.date
                 ORDER BY wd.date
             `;
+            console.log('Week query - Start:', weekStartStr, 'End:', weekEndStr);
         } else {
+            // Month view
+            const year = targetDate.getFullYear();
+            const month = targetDate.getMonth();
+            const monthStart = new Date(year, month, 1);
+            const monthEnd = new Date(year, month + 1, 0); // Last day of the month
+            
+            const monthStartStr = `${year}-${String(month + 1).padStart(2, '0')}-01`;
+            const monthEndStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(monthEnd.getDate()).padStart(2, '0')}`;
+            
             timeSeriesQuery = `
                 WITH month_dates AS (
                     SELECT generate_series(
-                        date_trunc('month', NOW()),
-                        date_trunc('month', NOW() + INTERVAL '1 month') - INTERVAL '1 day',
+                        '${monthStartStr}'::date,
+                        '${monthEndStr}'::date,
                         INTERVAL '1 day'
                     ) AS date
                 )
@@ -339,6 +402,10 @@ app.get('/api/dashboard-stats', requireAuth, async (req, res) => {
 
         console.log('Period:', period);
         console.log('Stats for period:', stats.rows[0]);
+        console.log('TimeSeries rows count:', timeSeries.rows.length);
+        if (period === 'year') {
+            console.log('Year timeSeries data:', timeSeries.rows);
+        }
 
         // Send both the stats and timeSeries data in the response
         res.json({

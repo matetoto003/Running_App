@@ -62,10 +62,16 @@
             <section class="page-content">
                 <div class="dashboard-header">
                     <h2>Dashboards</h2>
-                    <div class="period-selector">
-                        <button class="period-button levelcolor" data-period="week">This Week</button>
-                        <button class="period-button levelcolor active" data-period="month">This Month</button>
-                        <button class="period-button levelcolor" data-period="year">This Year</button>
+                    <div style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
+                        <div class="date-navigator" style="display: flex; align-items: center; gap: 8px;">
+                            <button id="prevBtn" style="background: none; border: none; font-size: 0.9em; cursor: pointer; color: var(--text-secondary); padding: 2px 4px; border-radius: 4px; transition: all 0.2s;" title="Previous">◀</button>
+                            <button id="nextBtn" style="background: none; border: none; font-size: 0.9em; cursor: pointer; color: var(--text-secondary); padding: 2px 4px; border-radius: 4px; transition: all 0.2s;" title="Next">▶</button>
+                        </div>
+                        <div class="period-selector">
+                            <button class="period-button levelcolor" data-period="week">This Week</button>
+                            <button class="period-button levelcolor active" data-period="month">This Month</button>
+                            <button class="period-button levelcolor" data-period="year">This Year</button>
+                        </div>
                     </div>
                 </div>
 
@@ -76,16 +82,6 @@
                             <h3>km in <span id="periodTitle">this month</span></h3>
                             <div id="kmChart" class="chart-container">
                                 <canvas id="mainChart"></canvas>
-                            </div>
-                            <div class="chart-legend" style="display:flex;gap:12px;margin-top:8px;align-items:center;font-size:13px;">
-                                <span style="display:inline-flex;align-items:center;gap:6px;">
-                                    <span style="width:14px;height:14px;background:rgba(24, 144, 255, 0.9);display:inline-block;border-radius:3px;border:1px solid rgba(24, 144, 255, 1);"></span>
-                                    <span>Run day</span>
-                                </span>
-                                <span style="display:inline-flex;align-items:center;gap:6px;">
-                                    <span style="width:14px;height:14px;background:rgba(200,200,200,0.25);display:inline-block;border-radius:3px;border:1px solid rgba(200,200,200,0.5);"></span>
-                                    <span>No run</span>
-                                </span>
                             </div>
                         </div>
                         
