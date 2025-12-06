@@ -60,8 +60,6 @@ function updateStatCards(stats) {
     if (elevationCard) {
         const elevationValueEl = elevationCard.querySelector('.stat-value');
         if (elevationValueEl) elevationValueEl.textContent = `${elevationValue}m`;
-        const elevationSmall = elevationCard.querySelector('small') || elevationCard.appendChild(document.createElement('small'));
-        elevationSmall.textContent = `+${elevationValue}m to last month`;
     }
 
     // Hardest run - now it's in the right-column, find it directly
@@ -70,12 +68,6 @@ function updateStatCards(stats) {
     if (hardestRunCard) {
         const hardestValueEl = hardestRunCard.querySelector('.stat-value');
         if (hardestValueEl) hardestValueEl.textContent = `${hardestRunValue}/10`;
-        const hardestSmall = hardestRunCard.querySelector('small') || hardestRunCard.appendChild(document.createElement('small'));
-        if (stats.hardest_run_date && hardestRunValue > 0) {
-            hardestSmall.textContent = new Date(stats.hardest_run_date).toLocaleDateString('hu-HU');
-        } else {
-            hardestSmall.textContent = 'No runs in this period';
-        }
     }    // A többi kártyát ID alapján frissíted, ami sokkal jobb és stabilabb
     const totalDistance = parseFloat(stats.total_distance || 0);
     const formattedDistance = totalDistance.toFixed(1);
