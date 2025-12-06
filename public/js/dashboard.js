@@ -14,7 +14,6 @@ const periodTitles = {
 // Statisztikák lekérése és megjelenítése
 async function fetchAndDisplayStats(period, date = new Date()) {
     try {
-        console.log('Fetching stats for period:', period, 'date:', date);
         const dateStr = date.toISOString().split('T')[0];
         const response = await fetch(`/api/dashboard-stats?period=${period}&date=${dateStr}&t=${Date.now()}`, {
             credentials: 'include',
@@ -25,11 +24,9 @@ async function fetchAndDisplayStats(period, date = new Date()) {
         const data = await response.json();
 
         if (response.ok) {
-            console.log('Raw stats data:', data.stats);
-            console.log('Difficulty data:', data.difficulty); // Log a kördiagram adataihoz
             updateStatCards(data.stats);
             updateCharts(data.timeSeries || [], period);
-            updateDifficultyChart(data.difficulty || []); // H�v�s a k�rdiagram friss�t�s�re
+            updateDifficultyChart(data.difficulty || []);
             updatePersonalBest(data.stats);
             document.getElementById('periodTitle').textContent = periodTitles[period];
         } else {

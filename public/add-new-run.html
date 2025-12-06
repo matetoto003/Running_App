@@ -116,6 +116,7 @@
                 <!-- Profile Tab -->
                 <div class="settings-tabs">
                     <button class="settings-tab levelcolor active" data-tab="profile">Profile</button>
+                    <button class="settings-tab levelcolor" data-tab="levels">Levels</button>
                     <button class="settings-tab levelcolor" data-tab="theme">Theme</button>
                     <button class="settings-tab levelcolor" data-tab="legal">Legal</button>
                 </div>
@@ -174,6 +175,15 @@
                             <button class="cancel-button" id="cancelPasswordBtn">Cancel</button>
                         </div>
                         <p class="form-message" id="passwordMessage"></p>
+                    </div>
+                </div>
+
+                <!-- Levels Section -->
+                <div id="levels" class="settings-section">
+                    <h3>Running Levels</h3>
+                    <p style="color: var(--text-secondary); margin-bottom: 30px;">Unlock new levels as you run more kilometers</p>
+                    <div id="levelsPyramid" style="display: flex; flex-direction: column; align-items: center; gap: 25px;">
+                        <!-- Levels will be populated by JavaScript -->
                     </div>
                 </div>
 

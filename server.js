@@ -226,7 +226,6 @@ app.get('/api/dashboard-stats', requireAuth, async (req, res) => {
                 const nextMondayStr = nextMondayDate.toISOString().split('T')[0];
                 
                 dateFilter = `created_at >= '${weekStartStr}'::date AND created_at < '${nextMondayStr}'::date`;
-                console.log('Week - Start (Monday):', weekStartStr, 'End (Sunday):', weekEndStr, 'NextMonday:', nextMondayStr);
                 break;
             case 'month':
                 // Get the start and end of the month for the target date
@@ -399,13 +398,6 @@ app.get('/api/dashboard-stats', requireAuth, async (req, res) => {
             pool.query(timeSeriesQuery, [req.session.userId]),
             pool.query(difficultyQuery, [req.session.userId])
         ]);
-
-        console.log('Period:', period);
-        console.log('Stats for period:', stats.rows[0]);
-        console.log('TimeSeries rows count:', timeSeries.rows.length);
-        if (period === 'year') {
-            console.log('Year timeSeries data:', timeSeries.rows);
-        }
 
         // Send both the stats and timeSeries data in the response
         res.json({
